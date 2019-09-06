@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
@@ -203,6 +204,8 @@ public class StatechartDiagramEditor extends DiagramPartitioningEditor implement
 
 	protected void checkXtextNature() {
 		IFileEditorInput editorInput = (IFileEditorInput) getEditorInput();
+		if (editorInput == null || editorInput.getFile() == null)
+			return;
 		IProject project = editorInput.getFile().getProject();
 		if (project != null && !XtextProjectHelper.hasNature(project) && project.isAccessible()
 				&& !project.isHidden()) {
@@ -283,31 +286,31 @@ public class StatechartDiagramEditor extends DiagramPartitioningEditor implement
 			registerZoomActions();
 
 			// Zoom in - Unix - Numpad plus
-			getKeyHandler().put(KeyStroke.getPressed('+', SWT.KEYPAD_ADD, SWT.MOD1),
+			keyHandler.put(KeyStroke.getPressed('+', SWT.KEYPAD_ADD, SWT.MOD1),
 					getActionRegistry().getAction(GEFActionConstants.ZOOM_IN));
 
 			// Zoom in - Unix - Numpad minus
-			getKeyHandler().put(KeyStroke.getPressed('-', SWT.KEYPAD_SUBTRACT, SWT.MOD1),
+			keyHandler.put(KeyStroke.getPressed('-', SWT.KEYPAD_SUBTRACT, SWT.MOD1),
 					getActionRegistry().getAction(GEFActionConstants.ZOOM_OUT));
 
 			// Zoom out - all OS - German and English keyboard layout
-			getKeyHandler().put(KeyStroke.getPressed('-', 0x2d, SWT.MOD1),
+			keyHandler.put(KeyStroke.getPressed('-', 0x2d, SWT.MOD1),
 					getActionRegistry().getAction(GEFActionConstants.ZOOM_OUT));
 
 			// Zoom in - all OS - English keyboard layout
-			getKeyHandler().put(KeyStroke.getPressed('=', 0x3d, SWT.MOD1),
+			keyHandler.put(KeyStroke.getPressed('=', 0x3d, SWT.MOD1),
 					getActionRegistry().getAction(GEFActionConstants.ZOOM_IN));
 
 			// Zoom in - Unix - German layout ([CTRL++] propagates char '+')
-			getKeyHandler().put(KeyStroke.getPressed('+', 0x2b, SWT.MOD1),
+			keyHandler.put(KeyStroke.getPressed('+', 0x2b, SWT.MOD1),
 					getActionRegistry().getAction(GEFActionConstants.ZOOM_IN));
 
 			// Zoom in - Windows - German layout ([CTRL++] propagates char 0x1d)
-			getKeyHandler().put(KeyStroke.getPressed((char) 0x1d, 0x2b, SWT.MOD1),
+			keyHandler.put(KeyStroke.getPressed((char) 0x1d, 0x2b, SWT.MOD1),
 					getActionRegistry().getAction(GEFActionConstants.ZOOM_IN));
 
 			// Zoom original - all OS
-			getKeyHandler().put(/* CTRL + '0' */
+			keyHandler.put(/* CTRL + '0' */
 					KeyStroke.getPressed('0', 0x30, SWT.MOD1), new Action() {
 						@Override
 						public void run() {
@@ -316,25 +319,13 @@ public class StatechartDiagramEditor extends DiagramPartitioningEditor implement
 					});
 
 			// Zoom original - all OS - Numpad 0
-			getKeyHandler().put(/* CTRL + '0' */
+			keyHandler.put(/* CTRL + '0' */
 					KeyStroke.getPressed('0', SWT.KEYPAD_0, SWT.MOD1), new Action() {
 						@Override
 						public void run() {
 							resetZoom();
 						}
 					});
-
-			// Test Error - for AERI testing only
-			// DOWN: stateMask=0x50000 CTRL ALT, keyCode=0x6c 'l', character=0xc
-			// ' '
-			getKeyHandler().put(KeyStroke.getPressed((char) 0xc, 0x6c, 0x50000), new Action() {
-				@Override
-				public void run() {
-					DiagramActivator.getDefault().getLog()
-							.log(new Status(IStatus.ERROR, DiagramActivator.PLUGIN_ID, "AERI Testing error"));
-				}
-			});
-
 		}
 		return keyHandler;
 	}
@@ -432,7 +423,7 @@ public class StatechartDiagramEditor extends DiagramPartitioningEditor implement
 
 	@Override
 	public EObject getContextObject() {
-		if(getDiagram() == null || getDiagram().getElement() == null)
+		if (getDiagram() == null || getDiagram().getElement() == null)
 			return null;
 		EObject element = getDiagram().getElement();
 		return element;
@@ -449,5 +440,13 @@ public class StatechartDiagramEditor extends DiagramPartitioningEditor implement
 		SpecificationElement contextObject = (SpecificationElement) getContextObject();
 		return super.isDirty() || (definitionSection != null && (definitionSection.getDefinition() != null
 				&& !definitionSection.getDefinition().equals(contextObject.getSpecification())));
+	}
+
+	@Override
+	public void doSave(IProgressMonitor progressMonitor) {
+		if (definitionSection != null) {
+			definitionSection.validateEmbeddedEditorContext();
+		}
+		super.doSave(progressMonitor);
 	}
 }

@@ -8,8 +8,9 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.yakindu.base.expressions.expressions.ConditionalExpression;
-import org.yakindu.base.expressions.expressions.Expression;
 import org.yakindu.base.expressions.expressions.ExpressionsPackage;
+import org.yakindu.base.types.Expression;
+import org.yakindu.base.types.impl.ExpressionImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -81,6 +82,7 @@ public class ConditionalExpressionImpl extends ExpressionImpl implements Conditi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Expression getCondition() {
 		return condition;
 	}
@@ -105,6 +107,7 @@ public class ConditionalExpressionImpl extends ExpressionImpl implements Conditi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCondition(Expression newCondition) {
 		if (newCondition != condition) {
 			NotificationChain msgs = null;
@@ -124,6 +127,7 @@ public class ConditionalExpressionImpl extends ExpressionImpl implements Conditi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Expression getTrueCase() {
 		return trueCase;
 	}
@@ -148,6 +152,7 @@ public class ConditionalExpressionImpl extends ExpressionImpl implements Conditi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setTrueCase(Expression newTrueCase) {
 		if (newTrueCase != trueCase) {
 			NotificationChain msgs = null;
@@ -167,6 +172,7 @@ public class ConditionalExpressionImpl extends ExpressionImpl implements Conditi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Expression getFalseCase() {
 		return falseCase;
 	}
@@ -191,6 +197,7 @@ public class ConditionalExpressionImpl extends ExpressionImpl implements Conditi
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setFalseCase(Expression newFalseCase) {
 		if (newFalseCase != falseCase) {
 			NotificationChain msgs = null;

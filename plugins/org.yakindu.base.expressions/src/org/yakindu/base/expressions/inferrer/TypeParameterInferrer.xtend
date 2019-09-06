@@ -32,6 +32,7 @@ import org.yakindu.base.types.validation.TypeValidator
 import static org.yakindu.base.expressions.inferrer.ExpressionsTypeInferrerMessages.*
 import static org.yakindu.base.types.inferrer.ITypeSystemInferrer.NOT_COMPATIBLE_CODE
 import static org.yakindu.base.types.inferrer.ITypeSystemInferrer.NOT_INFERRABLE_TYPE_PARAMETER_CODE
+import org.yakindu.base.types.Operation
 
 /**
  * Infers the actual type for a type parameter used in generic elements like operations or complex types.
@@ -136,7 +137,7 @@ class TypeParameterInferrer {
 		Map<TypeParameter, InferenceResult> inferredTypeParameterTypes, IValidationIssueAcceptor acceptor) {
 
 		val newMappedType = argumentType.type;
-		val typeInMap = inferredTypeParameterTypes.get(typeParameter);
+		val typeInMap = resolveType(inferredTypeParameterTypes, typeParameter);
 		if (typeInMap === null) {
 			inferredTypeParameterTypes.put(typeParameter,
 				InferenceResult.from(newMappedType, argumentType.bindings));
@@ -174,7 +175,7 @@ class TypeParameterInferrer {
 		val oldInferredType = oldInferenceResult?.type
 		if (oldInferredType instanceof TypeParameter) {
 			// get already inferred type from type parameter map
-			val mappedType = inferredTypeParameterTypes.get(oldInferredType);
+			val mappedType = resolveType(inferredTypeParameterTypes, oldInferredType);
 			if (mappedType === null) {
 				acceptor.warning(oldInferredType, NOT_INFERRABLE_TYPE_PARAMETER_CODE)
 				return null
@@ -190,6 +191,24 @@ class TypeParameterInferrer {
 		}
 		return oldInferenceResult;
 	}
+	
+	/**
+	 * recursive resolution of type, e.g. when we have E->F and F->Int in map, the method will return Int for E.
+	 */
+	def protected InferenceResult resolveType(Map<TypeParameter, InferenceResult> inferredTypeParameterTypes, TypeParameter key) {
+		val res = inferredTypeParameterTypes.get(key)
+		if (res === null)
+			return null
+
+		if (res.type instanceof TypeParameter) {
+			val recursiveRes = resolveType(inferredTypeParameterTypes, res.type as TypeParameter)
+			if (recursiveRes === null) {
+				return res
+			}
+			return recursiveRes
+		}
+		return res
+	}
 
 	def void inferTypeParametersFromOwner(InferenceResult operationOwnerResult,
 		Map<TypeParameter, InferenceResult> inferredTypeParameterTypes) {
@@ -201,6 +220,21 @@ class TypeParameterInferrer {
 				val binding = operationOwnerResult.bindings.get(i) // integer, boolean...
 				inferredTypeParameterTypes.put(typeParameter, binding)
 			}
+			// add mapping from supertype's type parameters to this type's type parameters
+			inferTypeParametersFromSuperTypes(operationOwnerType, inferredTypeParameterTypes)
+			
+		}
+	}
+	
+	protected def void inferTypeParametersFromSuperTypes(Type operationOwnerType, Map<TypeParameter, InferenceResult> inferredTypeParameterTypes) {
+		val superTypes = operationOwnerType.superTypes
+		for (TypeSpecifier superType : superTypes) {
+			for (var i = 0; i < superType.typeArguments.size; i++){
+				val argument = superType.typeArguments.get(i)
+				val param = (superType.type as GenericElement).typeParameters.get(i)
+				inferredTypeParameterTypes.put(param, InferenceResult.from(argument.type))
+			}
+			inferTypeParametersFromSuperTypes(superType.type, inferredTypeParameterTypes)
 		}
 	}
 
@@ -242,8 +276,12 @@ class TypeParameterInferrer {
 			acceptor.error(
 				String.format(INCOMPATIBLE_TYPES, argumentResult, InferenceResult.from(parameter.type, bindings)),
 				NOT_COMPATIBLE_CODE)
-			}
 		}
+	}
+		
+	def void inferTypeParametersFromTargetType(InferenceResult operationTargetResult, Operation op, Map<TypeParameter, InferenceResult> inferredTypeParameterTypes, IValidationIssueAcceptor acceptor) {
+		inferTypeParameterFromOperationArgument(op.typeSpecifier, operationTargetResult, inferredTypeParameterTypes, acceptor);
+	}
 		
 	def protected ListBasedValidationIssueAcceptor createIssueAcceptor() {
 		new IValidationIssueAcceptor.ListBasedValidationIssueAcceptor()

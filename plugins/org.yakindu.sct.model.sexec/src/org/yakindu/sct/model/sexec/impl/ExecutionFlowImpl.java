@@ -29,9 +29,8 @@ import org.yakindu.base.types.Annotation;
 import org.yakindu.base.types.ComplexType;
 import org.yakindu.base.types.Declaration;
 import org.yakindu.base.types.GenericElement;
-import org.yakindu.base.types.PackageMember;
+import org.yakindu.base.types.MetaComposite;
 import org.yakindu.base.types.Type;
-import org.yakindu.base.types.TypeConstraint;
 import org.yakindu.base.types.TypeParameter;
 import org.yakindu.base.types.TypeSpecifier;
 import org.yakindu.base.types.TypesPackage;
@@ -64,9 +63,11 @@ import org.yakindu.sct.model.sgraph.impl.ScopedElementImpl;
  *   <li>{@link org.yakindu.sct.model.sexec.impl.ExecutionFlowImpl#getEnterSequences <em>Enter Sequences</em>}</li>
  *   <li>{@link org.yakindu.sct.model.sexec.impl.ExecutionFlowImpl#getExitSequence <em>Exit Sequence</em>}</li>
  *   <li>{@link org.yakindu.sct.model.sexec.impl.ExecutionFlowImpl#getInitSequence <em>Init Sequence</em>}</li>
- *   <li>{@link org.yakindu.sct.model.sexec.impl.ExecutionFlowImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.yakindu.sct.model.sexec.impl.ExecutionFlowImpl#getAnnotations <em>Annotations</em>}</li>
- *   <li>{@link org.yakindu.sct.model.sexec.impl.ExecutionFlowImpl#getConstraint <em>Constraint</em>}</li>
+ *   <li>{@link org.yakindu.sct.model.sexec.impl.ExecutionFlowImpl#getAnnotationInfo <em>Annotation Info</em>}</li>
+ *   <li>{@link org.yakindu.sct.model.sexec.impl.ExecutionFlowImpl#getMetaFeatures <em>Meta Features</em>}</li>
+ *   <li>{@link org.yakindu.sct.model.sexec.impl.ExecutionFlowImpl#isStatic <em>Static</em>}</li>
+ *   <li>{@link org.yakindu.sct.model.sexec.impl.ExecutionFlowImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.yakindu.sct.model.sexec.impl.ExecutionFlowImpl#isAbstract <em>Abstract</em>}</li>
  *   <li>{@link org.yakindu.sct.model.sexec.impl.ExecutionFlowImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.yakindu.sct.model.sexec.impl.ExecutionFlowImpl#getSuperTypes <em>Super Types</em>}</li>
@@ -179,16 +180,6 @@ public class ExecutionFlowImpl extends ScopedElementImpl implements ExecutionFlo
 	protected Sequence initSequence;
 
 	/**
-	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getId()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String ID_EDEFAULT = null;
-
-	/**
 	 * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -199,14 +190,54 @@ public class ExecutionFlowImpl extends ScopedElementImpl implements ExecutionFlo
 	protected EList<Annotation> annotations;
 
 	/**
-	 * The cached value of the '{@link #getConstraint() <em>Constraint</em>}' containment reference list.
+	 * The cached value of the '{@link #getAnnotationInfo() <em>Annotation Info</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getConstraint()
+	 * @see #getAnnotationInfo()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<TypeConstraint> constraint;
+	protected AnnotatableElement annotationInfo;
+
+	/**
+	 * The cached value of the '{@link #getMetaFeatures() <em>Meta Features</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMetaFeatures()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<Declaration> metaFeatures;
+
+	/**
+	 * The default value of the '{@link #isStatic() <em>Static</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isStatic()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean STATIC_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isStatic() <em>Static</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isStatic()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean static_ = STATIC_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getId()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ID_EDEFAULT = null;
 
 	/**
 	 * The default value of the '{@link #isAbstract() <em>Abstract</em>}' attribute.
@@ -703,17 +734,6 @@ public class ExecutionFlowImpl extends ScopedElementImpl implements ExecutionFlo
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * The id is the name of the execution flow.
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public String getId() {
-		return getName();
-	}
-
-
-	/**
-	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -729,12 +749,66 @@ public class ExecutionFlowImpl extends ScopedElementImpl implements ExecutionFlo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<TypeConstraint> getConstraint() {
-		if (constraint == null) {
-			constraint = new EObjectContainmentEList<TypeConstraint>(TypeConstraint.class, this, SexecPackage.EXECUTION_FLOW__CONSTRAINT);
-		}
-		return constraint;
+	public AnnotatableElement getAnnotationInfo() {
+		return annotationInfo;
 	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetAnnotationInfo(AnnotatableElement newAnnotationInfo, NotificationChain msgs) {
+		AnnotatableElement oldAnnotationInfo = annotationInfo;
+		annotationInfo = newAnnotationInfo;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, SexecPackage.EXECUTION_FLOW__ANNOTATION_INFO, oldAnnotationInfo, newAnnotationInfo);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setAnnotationInfo(AnnotatableElement newAnnotationInfo) {
+		if (newAnnotationInfo != annotationInfo) {
+			NotificationChain msgs = null;
+			if (annotationInfo != null)
+				msgs = ((InternalEObject)annotationInfo).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - SexecPackage.EXECUTION_FLOW__ANNOTATION_INFO, null, msgs);
+			if (newAnnotationInfo != null)
+				msgs = ((InternalEObject)newAnnotationInfo).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - SexecPackage.EXECUTION_FLOW__ANNOTATION_INFO, null, msgs);
+			msgs = basicSetAnnotationInfo(newAnnotationInfo, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, SexecPackage.EXECUTION_FLOW__ANNOTATION_INFO, newAnnotationInfo, newAnnotationInfo));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EList<Declaration> getMetaFeatures() {
+		if (metaFeatures == null) {
+			metaFeatures = new EObjectContainmentEList<Declaration>(Declaration.class, this, SexecPackage.EXECUTION_FLOW__META_FEATURES);
+		}
+		return metaFeatures;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * The id is the name of the execution flow.
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public String getId() {
+		return getName();
+	}
+
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -800,6 +874,27 @@ public class ExecutionFlowImpl extends ScopedElementImpl implements ExecutionFlo
 			typeParameters = new EObjectContainmentEList<TypeParameter>(TypeParameter.class, this, SexecPackage.EXECUTION_FLOW__TYPE_PARAMETERS);
 		}
 		return typeParameters;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isStatic() {
+		return static_;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setStatic(boolean newStatic) {
+		boolean oldStatic = static_;
+		static_ = newStatic;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, SexecPackage.EXECUTION_FLOW__STATIC, oldStatic, static_));
 	}
 
 	/**
@@ -1203,8 +1298,10 @@ public class ExecutionFlowImpl extends ScopedElementImpl implements ExecutionFlo
 				return basicSetInitSequence(null, msgs);
 			case SexecPackage.EXECUTION_FLOW__ANNOTATIONS:
 				return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
-			case SexecPackage.EXECUTION_FLOW__CONSTRAINT:
-				return ((InternalEList<?>)getConstraint()).basicRemove(otherEnd, msgs);
+			case SexecPackage.EXECUTION_FLOW__ANNOTATION_INFO:
+				return basicSetAnnotationInfo(null, msgs);
+			case SexecPackage.EXECUTION_FLOW__META_FEATURES:
+				return ((InternalEList<?>)getMetaFeatures()).basicRemove(otherEnd, msgs);
 			case SexecPackage.EXECUTION_FLOW__SUPER_TYPES:
 				return ((InternalEList<?>)getSuperTypes()).basicRemove(otherEnd, msgs);
 			case SexecPackage.EXECUTION_FLOW__TYPE_PARAMETERS:
@@ -1261,12 +1358,16 @@ public class ExecutionFlowImpl extends ScopedElementImpl implements ExecutionFlo
 				return getExitSequence();
 			case SexecPackage.EXECUTION_FLOW__INIT_SEQUENCE:
 				return getInitSequence();
-			case SexecPackage.EXECUTION_FLOW__ID:
-				return getId();
 			case SexecPackage.EXECUTION_FLOW__ANNOTATIONS:
 				return getAnnotations();
-			case SexecPackage.EXECUTION_FLOW__CONSTRAINT:
-				return getConstraint();
+			case SexecPackage.EXECUTION_FLOW__ANNOTATION_INFO:
+				return getAnnotationInfo();
+			case SexecPackage.EXECUTION_FLOW__META_FEATURES:
+				return getMetaFeatures();
+			case SexecPackage.EXECUTION_FLOW__STATIC:
+				return isStatic();
+			case SexecPackage.EXECUTION_FLOW__ID:
+				return getId();
 			case SexecPackage.EXECUTION_FLOW__ABSTRACT:
 				return isAbstract();
 			case SexecPackage.EXECUTION_FLOW__VISIBLE:
@@ -1342,9 +1443,15 @@ public class ExecutionFlowImpl extends ScopedElementImpl implements ExecutionFlo
 				getAnnotations().clear();
 				getAnnotations().addAll((Collection<? extends Annotation>)newValue);
 				return;
-			case SexecPackage.EXECUTION_FLOW__CONSTRAINT:
-				getConstraint().clear();
-				getConstraint().addAll((Collection<? extends TypeConstraint>)newValue);
+			case SexecPackage.EXECUTION_FLOW__ANNOTATION_INFO:
+				setAnnotationInfo((AnnotatableElement)newValue);
+				return;
+			case SexecPackage.EXECUTION_FLOW__META_FEATURES:
+				getMetaFeatures().clear();
+				getMetaFeatures().addAll((Collection<? extends Declaration>)newValue);
+				return;
+			case SexecPackage.EXECUTION_FLOW__STATIC:
+				setStatic((Boolean)newValue);
 				return;
 			case SexecPackage.EXECUTION_FLOW__ABSTRACT:
 				setAbstract((Boolean)newValue);
@@ -1440,8 +1547,14 @@ public class ExecutionFlowImpl extends ScopedElementImpl implements ExecutionFlo
 			case SexecPackage.EXECUTION_FLOW__ANNOTATIONS:
 				getAnnotations().clear();
 				return;
-			case SexecPackage.EXECUTION_FLOW__CONSTRAINT:
-				getConstraint().clear();
+			case SexecPackage.EXECUTION_FLOW__ANNOTATION_INFO:
+				setAnnotationInfo((AnnotatableElement)null);
+				return;
+			case SexecPackage.EXECUTION_FLOW__META_FEATURES:
+				getMetaFeatures().clear();
+				return;
+			case SexecPackage.EXECUTION_FLOW__STATIC:
+				setStatic(STATIC_EDEFAULT);
 				return;
 			case SexecPackage.EXECUTION_FLOW__ABSTRACT:
 				setAbstract(ABSTRACT_EDEFAULT);
@@ -1519,12 +1632,16 @@ public class ExecutionFlowImpl extends ScopedElementImpl implements ExecutionFlo
 				return exitSequence != null;
 			case SexecPackage.EXECUTION_FLOW__INIT_SEQUENCE:
 				return initSequence != null;
-			case SexecPackage.EXECUTION_FLOW__ID:
-				return ID_EDEFAULT == null ? getId() != null : !ID_EDEFAULT.equals(getId());
 			case SexecPackage.EXECUTION_FLOW__ANNOTATIONS:
 				return annotations != null && !annotations.isEmpty();
-			case SexecPackage.EXECUTION_FLOW__CONSTRAINT:
-				return constraint != null && !constraint.isEmpty();
+			case SexecPackage.EXECUTION_FLOW__ANNOTATION_INFO:
+				return annotationInfo != null;
+			case SexecPackage.EXECUTION_FLOW__META_FEATURES:
+				return metaFeatures != null && !metaFeatures.isEmpty();
+			case SexecPackage.EXECUTION_FLOW__STATIC:
+				return static_ != STATIC_EDEFAULT;
+			case SexecPackage.EXECUTION_FLOW__ID:
+				return ID_EDEFAULT == null ? getId() != null : !ID_EDEFAULT.equals(getId());
 			case SexecPackage.EXECUTION_FLOW__ABSTRACT:
 				return abstract_ != ABSTRACT_EDEFAULT;
 			case SexecPackage.EXECUTION_FLOW__VISIBLE:
@@ -1593,19 +1710,26 @@ public class ExecutionFlowImpl extends ScopedElementImpl implements ExecutionFlo
 		}
 		if (baseClass == AnnotatableElement.class) {
 			switch (derivedFeatureID) {
+				case SexecPackage.EXECUTION_FLOW__ANNOTATIONS: return TypesPackage.ANNOTATABLE_ELEMENT__ANNOTATIONS;
+				case SexecPackage.EXECUTION_FLOW__ANNOTATION_INFO: return TypesPackage.ANNOTATABLE_ELEMENT__ANNOTATION_INFO;
 				default: return -1;
 			}
 		}
-		if (baseClass == PackageMember.class) {
+		if (baseClass == MetaComposite.class) {
 			switch (derivedFeatureID) {
-				case SexecPackage.EXECUTION_FLOW__ID: return TypesPackage.PACKAGE_MEMBER__ID;
-				case SexecPackage.EXECUTION_FLOW__ANNOTATIONS: return TypesPackage.PACKAGE_MEMBER__ANNOTATIONS;
+				case SexecPackage.EXECUTION_FLOW__META_FEATURES: return TypesPackage.META_COMPOSITE__META_FEATURES;
+				default: return -1;
+			}
+		}
+		if (baseClass == Declaration.class) {
+			switch (derivedFeatureID) {
+				case SexecPackage.EXECUTION_FLOW__STATIC: return TypesPackage.DECLARATION__STATIC;
+				case SexecPackage.EXECUTION_FLOW__ID: return TypesPackage.DECLARATION__ID;
 				default: return -1;
 			}
 		}
 		if (baseClass == Type.class) {
 			switch (derivedFeatureID) {
-				case SexecPackage.EXECUTION_FLOW__CONSTRAINT: return TypesPackage.TYPE__CONSTRAINT;
 				case SexecPackage.EXECUTION_FLOW__ABSTRACT: return TypesPackage.TYPE__ABSTRACT;
 				case SexecPackage.EXECUTION_FLOW__VISIBLE: return TypesPackage.TYPE__VISIBLE;
 				case SexecPackage.EXECUTION_FLOW__SUPER_TYPES: return TypesPackage.TYPE__SUPER_TYPES;
@@ -1668,19 +1792,26 @@ public class ExecutionFlowImpl extends ScopedElementImpl implements ExecutionFlo
 		}
 		if (baseClass == AnnotatableElement.class) {
 			switch (baseFeatureID) {
+				case TypesPackage.ANNOTATABLE_ELEMENT__ANNOTATIONS: return SexecPackage.EXECUTION_FLOW__ANNOTATIONS;
+				case TypesPackage.ANNOTATABLE_ELEMENT__ANNOTATION_INFO: return SexecPackage.EXECUTION_FLOW__ANNOTATION_INFO;
 				default: return -1;
 			}
 		}
-		if (baseClass == PackageMember.class) {
+		if (baseClass == MetaComposite.class) {
 			switch (baseFeatureID) {
-				case TypesPackage.PACKAGE_MEMBER__ID: return SexecPackage.EXECUTION_FLOW__ID;
-				case TypesPackage.PACKAGE_MEMBER__ANNOTATIONS: return SexecPackage.EXECUTION_FLOW__ANNOTATIONS;
+				case TypesPackage.META_COMPOSITE__META_FEATURES: return SexecPackage.EXECUTION_FLOW__META_FEATURES;
+				default: return -1;
+			}
+		}
+		if (baseClass == Declaration.class) {
+			switch (baseFeatureID) {
+				case TypesPackage.DECLARATION__STATIC: return SexecPackage.EXECUTION_FLOW__STATIC;
+				case TypesPackage.DECLARATION__ID: return SexecPackage.EXECUTION_FLOW__ID;
 				default: return -1;
 			}
 		}
 		if (baseClass == Type.class) {
 			switch (baseFeatureID) {
-				case TypesPackage.TYPE__CONSTRAINT: return SexecPackage.EXECUTION_FLOW__CONSTRAINT;
 				case TypesPackage.TYPE__ABSTRACT: return SexecPackage.EXECUTION_FLOW__ABSTRACT;
 				case TypesPackage.TYPE__VISIBLE: return SexecPackage.EXECUTION_FLOW__VISIBLE;
 				case TypesPackage.TYPE__SUPER_TYPES: return SexecPackage.EXECUTION_FLOW__SUPER_TYPES;
@@ -1720,9 +1851,11 @@ public class ExecutionFlowImpl extends ScopedElementImpl implements ExecutionFlo
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: ");
 		result.append(name);
+		result.append(", static: ");
+		result.append(static_);
 		result.append(", abstract: ");
 		result.append(abstract_);
 		result.append(", visible: ");

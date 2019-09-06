@@ -77,8 +77,36 @@ class EventNaming {
 	def eventQueuePushFunction(ExecutionFlow it) {
 		'''«eventQueueTypeName»_push'''
 	}
-
+	
 	def bufferSize(ExecutionFlow it) {
 		'''«name»_eventqueue_buffersize'''.toString.toUpperCase
+	}
+	
+	def invalidEvent() {
+		"SC_INVALID_EVENT_VALUE"
+	}
+	
+	def internalQueue() {
+		"internal_event_queue"
+	}
+	
+	def inEventQueue() {
+		"in_event_queue"
+	}
+	
+	def dispatchEventFctID(ExecutionFlow it) {
+		'''«functionPrefix»dispatch_event'''
+	}
+	
+	def nextEventFctID(ExecutionFlow it) {
+		'''«functionPrefix»get_next_event'''
+	}
+	
+	def addToQueueFctID(ExecutionFlow it) {
+		'''«functionPrefix»add_event_to_queue'''
+	}
+	
+	def addToQueueValueFctID(ExecutionFlow it) {
+		'''«functionPrefix»add_value_event_to_queue'''
 	}
 }

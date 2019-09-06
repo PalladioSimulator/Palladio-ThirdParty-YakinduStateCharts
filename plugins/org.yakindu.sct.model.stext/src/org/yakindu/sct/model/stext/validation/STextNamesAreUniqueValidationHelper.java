@@ -18,7 +18,6 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.impl.EReferenceImpl;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.service.OperationCanceledManager;
@@ -109,11 +108,6 @@ implements INamesAreUniqueValidationHelper {
 			createDuplicateNameWarning(description, description.getEClass(), acceptor);
 			createDuplicateNameWarning(doublet, description.getEClass(), acceptor);
 		}
-	}
-
-	protected void validateEqualSimpleName(IEObjectDescription description, IEObjectDescription doublet,
-			ValidationMessageAcceptor acceptor) {
-
 	}
 
 	protected void duplicateLastElement(IEObjectDescription description, IEObjectDescription put,

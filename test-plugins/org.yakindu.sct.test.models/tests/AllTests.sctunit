@@ -1,40 +1,72 @@
 testsuite AllTests {
-	AlwaysOncycle,
-	AssignmentAsExpression,
-	BitExpressions,
-	BooleanExpressions,
-	CastExpressions,
-	Choice, 
-	CKeywords, 
-	ConditionalExpression,
-	ConstantsTests,
+	
+	// declarations
 	ConstOnlyDefaultScope,
 	ConstOnlyInternalScope,
 	ConstOnlyNamedScope,
-	ChildFirstExecutionHierarchy,
-	ChildFirstLocalReactions,
-	ChildFirstOrthogonalReactions,
-	Declarations, 
-	DeepEntry,
-	DeepHistory,
-	DynamicChoice,
-	EmptyTransition, 
-	EnterState,
-	EntryChoice,
-	EntryExitSelfTransition,
+	
+	// entries
 	EntryReactionAction,
+
+	// eventdriven
 	EventDrivenInternalEvent,
 	EventDrivenTriggeredByEvent,
 	EventDrivenTriggeredByTimeEvent,
-//	EventDrivenOutEvents,
-	ExitOnSelfTransition, 
+	LocalEvents,
+	NoLocalEvents,
+		
+	// events
+	OutEventVisibilityEventDriven,
+		
+	// executionorder
+	ChildFirstExecutionHierarchy,
+	ChildFirstLocalReactions,
+	ChildFirstOrthogonalReactions,
+	ChildFirstTransitionsinSubchart,
+	ChildFirstTransitionTaking ,
+	ParentFirstExecutionHierarchy,
+	ParentFirstLocalReactions,
+	ParentFirstOrthogonalReactions,
+	
+	// exits
 	ExitState,
+	TransitionHandlesMultipleExists,
+	
+	// expressions
+	TriggerExpressionPrecedence,
+	
+	// statechartactions
+    StatechartEntryExitActions, 
+
+	// not grouped
+	AlwaysOncycle,
+	AssignmentAsExpression,
+	BitExpressions, 
+	BitwiseExecutionOrder,
+	BooleanExpressions,
+	CastExpressions,
+	Choice,
+	CKeywords, 
+	ConditionalExpression,
+	ConstantsTests,
+	ConstantsVariationTests,
+	Declarations,
+	DeepEntry, 
+	DeepHistory,
+	DynamicChoice,
+	EmptyTransition,
+	EnterState,
+	EntryChoice, 
+	EntryExitSelfTransition,
+	EventDrivenOutEvents,
+	ExitOnSelfTransition, 
+	ExitSequence,
 	FeatureCalls,
 	FinalState,
 	FloatModulo,
 	Guard, 
 	GuardedEntry, 
-	GuardedExit, 
+	Guard,
 	HistoryWithExitPoint,
 	HistoryWithoutInitialStep,
 	InEventLifeCycle, 
@@ -43,15 +75,11 @@ testsuite AllTests {
 	LocalReactions,
 	LogicalAndTests, 
 	LogicalOrTests,
-	LocalEvents,
-	NamedInterfaceAccess,
+	NamedInterfaceAccess, 
 	OperationsTest,
 //	OperationsWithoutBraces,
 	OutEventLifeCycle,
 	Parenthesis,
-	ParentFirstExecutionHierarchy,
-	ParentFirstLocalReactions,
-	ParentFirstOrthogonalReactions,
 	PriorityValues,
 	RaiseEvent,
 	ReadOnlyVariable,
@@ -60,7 +88,7 @@ testsuite AllTests {
 	ShallowHistoryWithDeepEntry, 	
 	SimpleEvent,
 	SimpleHierachy,
-	StatechartActive, 
+	StatechartActive,
 	StatechartLocalReactions,
 	StateIsActive, 
 	StaticChoice,
@@ -70,11 +98,8 @@ testsuite AllTests {
 	SyncJoin,
 	TransitionWithoutCondition,
 	TriggerGuardExpressions,
-	TriggerExpressionPrecedence,
 	ValuedEvents,
-	TypeAlias
-	//Add the following tests if sct unit Java and C++ generators
-	// support mock timer service generation
-	//StatemachineKeywords,
-	//TimedTransitions,
+	TypeAlias,
+	StatemachineKeywords,
+	TimedTransitions
 } 

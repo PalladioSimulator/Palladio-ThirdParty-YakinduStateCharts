@@ -13,8 +13,11 @@ package org.yakindu.sct.generator.c.submodules.eventdriven
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import org.yakindu.base.types.Direction
+import org.yakindu.base.types.Event
+import org.yakindu.sct.generator.c.GeneratorPredicate
 import org.yakindu.sct.generator.c.extensions.EventNaming
 import org.yakindu.sct.generator.c.submodules.EventCode
+import org.yakindu.sct.generator.c.types.CLiterals
 import org.yakindu.sct.generator.core.templates.ExpressionsGenerator
 import org.yakindu.sct.model.sexec.ExecutionFlow
 import org.yakindu.sct.model.stext.stext.EventDefinition
@@ -22,37 +25,73 @@ import org.yakindu.sct.model.stext.stext.EventRaisingExpression
 
 /**
  * @author rbeckmann
+ * @author axel terfloth
  *
  */
 @Singleton // Guice
 class EventDrivenEventCode extends EventCode {
 	@Inject extension EventNaming
+	@Inject protected extension CLiterals
+	@Inject protected extension GeneratorPredicate
 	
 	protected static int valueVarIndex = 0
 	
 	override CharSequence eventRaisingCode(EventRaisingExpression it, ExpressionsGenerator exp) {
-		val valueVarName = '''value_«valueVarIndex++»'''
 		'''
-		«IF event.definition.event.direction != Direction::LOCAL»
-			«IF value !== null»
-				«event.definition.event.valueAccess» = «exp.code(value)»;
-			«ENDIF»
-			«event.definition.event.access» = bool_true«ELSE»
-			«IF value !== null»
-			«event.definition.event.typeSpecifier.targetLanguageName» «valueVarName» = «exp.code(value)»;
-			«functionPrefix(flow)»add_value_event_to_queue(«scHandle», «event.definition.event.eventEnumMemberName», &«valueVarName»)
-			«ELSE»
-			«functionPrefix(flow)»add_event_to_queue(«scHandle», «event.definition.event.eventEnumMemberName»)«ENDIF»«ENDIF»'''
+		«IF eventDefinition.isQueued»
+		«toQueue(exp)»
+		«ELSE»
+		«super.eventRaisingCode(it, exp)»
+		«ENDIF»
+		'''
 	}
 	
-	override interfaceIncomingEventRaiserBody(ExecutionFlow it, EventDefinition event) '''
+	override interfaceIncomingEventRaiserBody(ExecutionFlow it, EventDefinition event)  {
+		if(event.isQueued) {
+			'''
+			«IF event.hasValue»
+			«event.typeSpecifier.targetLanguageName» event_value = value;
+			«flow.addToQueueValueFctID»(&(«scHandle»->«inEventQueue»), «event.eventEnumMemberName», &event_value);
+			«ELSE»
+			«flow.addToQueueFctID»(&(«scHandle»->«inEventQueue»), «event.eventEnumMemberName»);
+			«ENDIF»
+			«runCycleFctID»(«scHandle»);
+			'''
+		} else {
+			'''
 			«IF event.hasValue»
 			«event.valueAccess» = value;
 			«ENDIF»
-			«event.access» = bool_true;
+			«event.access» = «TRUE_LITERAL»;
 			
-			«functionPrefix»runCycle(«scHandle»);
-	'''
+			«runCycleFctID»(«scHandle»);
+			'''
+		}
+	}
 	
 	
+	
+	def toQueue(EventRaisingExpression it, ExpressionsGenerator exp) {
+		val valueVarName = '''value_«valueVarIndex++»'''
+		val event = event.definition.event
+		val queue = '''&(«scHandle»->«switch(event.direction) {
+			case IN: inEventQueue
+			case LOCAL: internalQueue
+			case OUT: ""
+		}»)'''
+		'''
+		«IF value !== null»
+		«event.typeSpecifier.targetLanguageName» «valueVarName» = «exp.code(value)»;
+		«flow.addToQueueValueFctID»(«queue», «event.eventEnumMemberName», &«valueVarName»)
+		«ELSE»
+		«flow.addToQueueFctID»(«queue», «event.eventEnumMemberName»)«ENDIF»
+		'''
+	}
+	
+	def eventDefinition(EventRaisingExpression it) {
+		val decl = event.definition
+		if(decl instanceof EventDefinition) {
+			decl
+		} else null
+	}
 }

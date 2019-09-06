@@ -12,6 +12,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+import org.yakindu.base.types.AnnotatableElement;
 import org.yakindu.base.types.Annotation;
 import org.yakindu.base.types.AnnotationType;
 import org.yakindu.base.types.ArrayTypeSpecifier;
@@ -22,17 +23,16 @@ import org.yakindu.base.types.EnumerationType;
 import org.yakindu.base.types.Enumerator;
 import org.yakindu.base.types.Event;
 import org.yakindu.base.types.GenericElement;
+import org.yakindu.base.types.MetaComposite;
 import org.yakindu.base.types.Operation;
-import org.yakindu.base.types.PackageMember;
 import org.yakindu.base.types.Parameter;
 import org.yakindu.base.types.PrimitiveType;
 import org.yakindu.base.types.Property;
-import org.yakindu.base.types.RangeConstraint;
 import org.yakindu.base.types.Type;
 import org.yakindu.base.types.TypeAlias;
-import org.yakindu.base.types.TypeConstraint;
 import org.yakindu.base.types.TypeParameter;
 import org.yakindu.base.types.TypeSpecifier;
+import org.yakindu.base.types.TypedDeclaration;
 import org.yakindu.base.types.TypesFactory;
 import org.yakindu.base.types.TypesPackage;
 
@@ -91,16 +91,16 @@ public class TypesFactoryImpl extends EFactoryImpl implements TypesFactory {
 			case TypesPackage.PRIMITIVE_TYPE: return createPrimitiveType();
 			case TypesPackage.COMPLEX_TYPE: return createComplexType();
 			case TypesPackage.ENUMERATOR: return createEnumerator();
-			case TypesPackage.TYPE_CONSTRAINT: return createTypeConstraint();
 			case TypesPackage.TYPE_PARAMETER: return createTypeParameter();
 			case TypesPackage.GENERIC_ELEMENT: return createGenericElement();
-			case TypesPackage.PACKAGE_MEMBER: return createPackageMember();
-			case TypesPackage.RANGE_CONSTRAINT: return createRangeConstraint();
 			case TypesPackage.DOMAIN: return createDomain();
 			case TypesPackage.TYPE_ALIAS: return createTypeAlias();
 			case TypesPackage.ANNOTATION: return createAnnotation();
+			case TypesPackage.ANNOTATABLE_ELEMENT: return createAnnotatableElement();
 			case TypesPackage.ARRAY_TYPE_SPECIFIER: return createArrayTypeSpecifier();
 			case TypesPackage.ANNOTATION_TYPE: return createAnnotationType();
+			case TypesPackage.TYPED_DECLARATION: return createTypedDeclaration();
+			case TypesPackage.META_COMPOSITE: return createMetaComposite();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -251,16 +251,6 @@ public class TypesFactoryImpl extends EFactoryImpl implements TypesFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public TypeConstraint createTypeConstraint() {
-		TypeConstraintImpl typeConstraint = new TypeConstraintImpl();
-		return typeConstraint;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public TypeParameter createTypeParameter() {
 		TypeParameterImpl typeParameter = new TypeParameterImpl();
 		return typeParameter;
@@ -274,26 +264,6 @@ public class TypesFactoryImpl extends EFactoryImpl implements TypesFactory {
 	public GenericElement createGenericElement() {
 		GenericElementImpl genericElement = new GenericElementImpl();
 		return genericElement;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public PackageMember createPackageMember() {
-		PackageMemberImpl packageMember = new PackageMemberImpl();
-		return packageMember;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public RangeConstraint createRangeConstraint() {
-		RangeConstraintImpl rangeConstraint = new RangeConstraintImpl();
-		return rangeConstraint;
 	}
 
 	/**
@@ -331,6 +301,16 @@ public class TypesFactoryImpl extends EFactoryImpl implements TypesFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public AnnotatableElement createAnnotatableElement() {
+		AnnotatableElementImpl annotatableElement = new AnnotatableElementImpl();
+		return annotatableElement;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public ArrayTypeSpecifier createArrayTypeSpecifier() {
 		ArrayTypeSpecifierImpl arrayTypeSpecifier = new ArrayTypeSpecifierImpl();
 		return arrayTypeSpecifier;
@@ -344,6 +324,26 @@ public class TypesFactoryImpl extends EFactoryImpl implements TypesFactory {
 	public AnnotationType createAnnotationType() {
 		AnnotationTypeImpl annotationType = new AnnotationTypeImpl();
 		return annotationType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public TypedDeclaration createTypedDeclaration() {
+		TypedDeclarationImpl typedDeclaration = new TypedDeclarationImpl();
+		return typedDeclaration;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MetaComposite createMetaComposite() {
+		MetaCompositeImpl metaComposite = new MetaCompositeImpl();
+		return metaComposite;
 	}
 
 	/**

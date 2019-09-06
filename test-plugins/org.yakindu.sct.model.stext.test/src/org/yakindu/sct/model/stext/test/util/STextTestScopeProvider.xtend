@@ -80,7 +80,6 @@ class STextTestScopeProvider extends STextScopeProvider {
 		addToIndex(descriptions, cptTemplate)
 		addToIndex(descriptions, cptTemplate.member.head)
 		
-		
 		val nestedTemplate = createPackageWithNestedComplexTypeFunction()
 		addToIndex(descriptions, nestedTemplate)
 		addToIndex(descriptions, nestedTemplate.member.head)
@@ -100,6 +99,16 @@ class STextTestScopeProvider extends STextScopeProvider {
 		addToIndex(descriptions, createOperationWithMixedOptionalAndVarargsParameters)
 		
 		addToIndex(descriptions, createComplexTypeWithOverloadedOperations)
+		
+		val subSubTypeOfGenericType = createSubSubTypeOfGenericType
+		addToIndex(descriptions, subSubTypeOfGenericType.superTypes.get(0).type.superTypes.get(0).type)
+		addToIndex(descriptions, subSubTypeOfGenericType.superTypes.get(0).type)
+		addToIndex(descriptions, subSubTypeOfGenericType)
+		
+		val nestedPackage = createNestedPackageWithTypes()
+		addToIndex(descriptions, nestedPackage)
+		addToIndex(descriptions, nestedPackage.member.head)
+		
 		
 		return new SimpleScope(descriptions)
 	}
@@ -173,6 +182,7 @@ class STextTestScopeProvider extends STextScopeProvider {
 		val complexType = factory.createComplexType => [
 			name = "ComplexType"
 			features += createProperty("x", INTEGER)
+			features += createProperty("y", it)
 		]
 		complexType.addToResource
 		complexType
@@ -260,6 +270,8 @@ class STextTestScopeProvider extends STextScopeProvider {
 	/**
 	 * ParameterizedMethodOwner {
 	 * 	T1 genericOp<T1, T2>(T1 p1, T2 p1);
+	 * 	T genericOpWoParams<T>();
+	 * 	boolean concreteOp(boolean p1);
 	 * }
 	 */
 	def protected ComplexType createParameterizedMethodOwner() {
@@ -272,6 +284,16 @@ class STextTestScopeProvider extends STextScopeProvider {
 	 			op.typeSpecifier = op.typeParameters.get(0).toTypeSpecifier
 	 			op.parameters += createParameter("p1", op.typeParameters.get(0).toTypeSpecifier)
 	 			op.parameters += createParameter("p2", op.typeParameters.get(1).toTypeSpecifier)
+	 		]
+	 		ct.features += createOperation => [op |
+	 			op.name = "genericOpWoParams"
+	 			op.typeParameters += createTypeParameter("T")
+	 			op.typeSpecifier = op.typeParameters.get(0).toTypeSpecifier
+	 		]
+	 		ct.features += createOperation => [op |
+	 			op.name = "concreteOp"
+	 			op.typeSpecifier = ts.getType(BOOLEAN).toTypeSpecifier
+	 			op.parameters += createParameter("p1", ts.getType(BOOLEAN).toTypeSpecifier)
 	 		]
 	 	]
 		complexType
@@ -476,6 +498,67 @@ class STextTestScopeProvider extends STextScopeProvider {
 				op.typeSpecifier = op.typeParameters.head.toTypeSpecifier
 			]
 		]
+	}
+	
+	/**
+	 * GenericType<E> {
+	 *   E get();
+	 *   void add(p:E)
+	 * }
+	 * 
+	 * SubTypeOfGenericType<E> extends GenericType<E> { }
+	 * 
+	 * SubSubTypeOfGenericType extends SubTypeOfGenericType<boolean> { }
+	 * 
+	 */
+	def protected ComplexType createSubSubTypeOfGenericType() {
+		val genericType = createComplexType => [ct |
+			ct.name = "GenericType"
+			ct.typeParameters += createTypeParameter("E")
+			ct.features += createProperty("prop1", ct.typeParameters.get(0))
+			ct.features += createOperation => [op |
+				op.name = "add"
+				op.parameters += createParameter("p", ct.typeParameters.get(0).toTypeSpecifier)
+				op.typeSpecifier = ts.getType(VOID).toTypeSpecifier
+			]
+			ct.features += createOperation => [op |
+				op.name = "get"
+				op.typeSpecifier = ct.typeParameters.get(0).toTypeSpecifier
+			]
+		]
+		genericType.addToResource
+		
+		val subType = createComplexType => [st |
+			st.name = "SubTypeOfGenericType"
+			st.typeParameters += createTypeParameter("E")
+			st.superTypes += createTypeSpecifier => [
+				type = genericType
+				typeArguments += st.typeParameters.get(0).toTypeSpecifier
+			]
+		]
+		subType.addToResource
+		
+		val subSubType = createComplexType => [st |
+			st.name = "SubSubTypeOfGenericType"
+			st.superTypes += createTypeSpecifier => [
+				type = subType
+				typeArguments += ts.getType(BOOLEAN).toTypeSpecifier
+			]
+		]
+		subSubType.addToResource
+		subSubType
+	}
+	
+	def protected Package createNestedPackageWithTypes() {
+		val pkg = createRootPackage("Types") => [
+			member += createEnumerationType => [
+				name = "EnumType"
+				enumerator += createEnumerator("FOO")
+				enumerator += createEnumerator("BAR")
+			]
+		]
+		pkg.addToResource
+		pkg
 	}
 	
 }

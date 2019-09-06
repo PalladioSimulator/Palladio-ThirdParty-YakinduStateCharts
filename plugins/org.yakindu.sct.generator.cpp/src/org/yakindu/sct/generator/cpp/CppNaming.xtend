@@ -22,6 +22,7 @@ import org.yakindu.sct.model.sexec.ExecutionFlow
 import org.yakindu.sct.model.sexec.TimeEvent
 import org.yakindu.sct.model.sexec.extensions.SExecExtensions
 import org.yakindu.sct.model.sexec.naming.INamingService
+import org.yakindu.sct.model.sexec.transformation.SgraphExtensions
 import org.yakindu.sct.model.sgen.GeneratorEntry
 import org.yakindu.sct.model.sgraph.Scope
 import org.yakindu.sct.model.stext.stext.EventDefinition
@@ -30,7 +31,9 @@ import org.yakindu.sct.model.stext.stext.InternalScope
 import org.yakindu.sct.model.stext.stext.OperationDefinition
 import org.yakindu.sct.model.stext.stext.StatechartScope
 import org.yakindu.sct.model.stext.stext.VariableDefinition
-import org.yakindu.sct.model.sexec.transformation.SgraphExtensions
+
+import static org.yakindu.sct.generator.c.CGeneratorConstants.*
+import static org.yakindu.sct.generator.cpp.CppGeneratorConstants.*
 
 /**
  * @author Markus Mühlbrands - Initial contribution and API
@@ -52,54 +55,74 @@ class CppNaming extends Naming {
 	}
 
 	def statemachineInterface() {
-		'StatemachineInterface'
+		SM_INTERFACE
 	}
 	
 	def statesCountConst() {
-		'numStates'
+		STATES_COUNT
 	}
 
 	def orthogonalStatesConst() {
-		'maxOrthogonalStates'
+		MAX_ORTHOGONAL_STATES
 	}
 
 	def historyStatesConst() {
-		'maxHistoryStates'
+		MAX_HISTORY_STATES
 	}
 
 	def timedStatemachineInterface() {
-		'TimedStatemachineInterface'
+		SM_TIMED_INTERFACE
 	}
 
 	def timerInterface() {
-		'TimerInterface'
+		TIMER_INTERFACE
 	}
 
 	def timerInstance() {
-		'timer'
+		TIMER
 	}
 
 	def timeEventsCountConst() {
-		'timeEventsCount'
+		TIME_EVENTS_COUNT
 	}
 
 	def timeEventsCountparallelConst() {
-		'parallelTimeEventsCount'
+		PARALLEL_TIME_EVENTS_COUNT
 	}
 
 	def timeEventsInstance() {
-		'timeEvents'
+		TIME_EVENTS
+	}
+	
+	override enterStateTracingFctID(ExecutionFlow it) {
+		STATE_ENTERED
+	}
+	
+	override exitStateTracingFctID(ExecutionFlow it) {
+		STATE_EXITED
+	}
+	
+	def traceObserverModule() {
+		TRACE_OBSERVER
+	}
+	
+	def scTracing() {
+		SM_TRACING
+	}
+	
+	def YSCNamespace() {
+		YSC_NAMESPACE
 	}
 	
 	override dispatch scopeTypeDeclMember(VariableDefinition it) '''
 		«IF type.name != 'void'»«IF const»static const «ENDIF»«typeSpecifier.targetLanguageName» «name.asEscapedIdentifier»;«ENDIF»
 	'''
 
-	def protected signature(OperationDefinition it) '''
+	def signature(OperationDefinition it) '''
 	«typeSpecifier.targetLanguageName» «name.asEscapedIdentifier»(«FOR parameter : parameters SEPARATOR ', '»«IF parameter.isVarArgs»...«ELSE»«parameter.typeSpecifier.
 		targetLanguageName» «parameter.identifier»«ENDIF»«ENDFOR»)'''
 
-	def protected OCB_InterfaceSetterDeclaration(StatechartScope scope, boolean fqn) '''
+	def OCB_InterfaceSetterDeclaration(StatechartScope scope, boolean fqn) '''
 	void «IF fqn»«scope.flow.module»::«ENDIF»set«scope.interfaceOCBName»(«scope.interfaceOCBName»* operationCallback)'''
 
 	def protected identifier(Parameter parameter) {
@@ -116,6 +139,10 @@ class CppNaming extends Naming {
 
 	def OCB_Instance(Scope it) {
 		it.instance + "_OCB"
+	}
+	
+	def tracingInstance(ExecutionFlow it) {
+		"iface" + traceObserverModule
 	}
 
 	def dispatch String getInterfaceName(Scope it) '''
@@ -153,7 +180,27 @@ class CppNaming extends Naming {
 	override asFunction(OperationDefinition it) {
 		name.asEscapedIdentifier
 	}
-
+	
+	override enterFctID(ExecutionFlow it) {
+		ENTER
+	}
+	
+	override exitFctID(ExecutionFlow it) {
+		EXIT
+	}
+	
+	override initFctID(ExecutionFlow it) {
+		INIT
+	}
+	
+	override runCycleFctID(ExecutionFlow it) {
+		RUN_CYCLE
+	}
+	
+	override isActiveFctID(ExecutionFlow it) {
+		IS_ACTIVE
+	}
+	
 	override asRaiser(EventDefinition it) {
 		'raise_' + name.asIdentifier.toFirstLower
 	}
@@ -175,11 +222,19 @@ class CppNaming extends Naming {
 	}
 
 	override raiseTimeEventFctID(ExecutionFlow it) {
-		"raiseTimeEvent"
+		RAISE_TIME_EVENT
 	}
 
 	override isStateActiveFctID(ExecutionFlow it) {
-		"isStateActive"
+		IS_STATE_ACTIVE
+	}
+	
+	override isFinalFctID(ExecutionFlow it) {
+		IS_FINAL
+	}
+	
+	def numTimeEventsFctID(ExecutionFlow it) {
+		"getNumberOfParallelTimeEvents"
 	}
 
 	override dispatch access(OperationDefinition it) {

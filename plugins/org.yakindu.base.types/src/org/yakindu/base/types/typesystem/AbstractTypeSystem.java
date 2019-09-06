@@ -25,6 +25,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.yakindu.base.types.ComplexType;
 import org.yakindu.base.types.Operation;
 import org.yakindu.base.types.PrimitiveType;
 import org.yakindu.base.types.Property;
@@ -173,6 +174,14 @@ public abstract class AbstractTypeSystem implements ITypeSystem {
 		resource.getContents().add(primitive);
 		return primitive;
 	}
+	
+	protected Type declareComplex(String name) {
+		ComplexType complex = TypesFactory.eINSTANCE.createComplexType();
+		complex.setName(name);
+		declareType(complex, name);
+		resource.getContents().add(complex);
+		return complex;
+	}
 
 	protected void declareType(Type type, String name) {
 		typeRegistry.put(name, type);
@@ -308,5 +317,40 @@ public abstract class AbstractTypeSystem implements ITypeSystem {
 	@Override
 	public boolean isExtensionProperty(Property prop) {
 		return extensionPropertyRegistry.containsValue(prop);
+	}
+
+	@Override
+	public boolean isConvertableTo(Type type1, Type type2) {
+		return isSame(getConversionType(type1), type2);
+	}
+
+	@Override
+	public boolean isString(Type type) {
+		return isSame(type, getType(STRING));
+	}
+	
+	@Override
+	public boolean isReal(Type type) {
+		return isSame(type, getType(REAL));
+	}
+	
+	@Override
+	public boolean isInteger(Type type) {
+		return isSame(type, getType(INTEGER));
+	}
+	
+	@Override
+	public boolean isBoolean(Type type) {
+		return isSame(type, getType(BOOLEAN));
+	}
+	
+	@Override
+	public boolean isVoid(Type type) {
+		return isSame(type, getType(VOID));
+	}
+	
+	@Override
+	public boolean isAny(Type type) {
+		return isSame(type, getType(ANY));
 	}
 }

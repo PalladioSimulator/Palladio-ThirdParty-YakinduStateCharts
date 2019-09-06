@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.yakindu.base.expressions.expressions.ArgumentExpression;
-import org.yakindu.base.expressions.expressions.Expression;
 import org.yakindu.base.expressions.expressions.util.ArgumentSorter;
+import org.yakindu.base.types.Expression;
 import org.yakindu.base.types.Operation;
 import org.yakindu.base.types.Parameter;
 import org.yakindu.base.types.Type;
@@ -92,8 +92,14 @@ public class OperationOverloadingResolver {
 	protected boolean isCallable(Operation operation, ArgumentExpression expression) {
 		EList<Expression> orderedExpressions = ArgumentSorter.getOrderedExpressions(expression.getArguments(),
 				operation);
-		List<Type> argumentTypes = orderedExpressions.stream().map(it -> inferrer.infer(it).getType())
-				.filter(t -> t != null).collect(Collectors.toList());
+		
+		List<Type> argumentTypes = orderedExpressions.stream()
+				.map(it -> inferrer.infer(it))
+				.filter(t -> t != null)
+				.map(t -> t.getType())
+				.filter(t -> t != null)
+				.collect(Collectors.toList());
+		
 		List<Type> parameterTypes = operation.getParameters().stream().map(it -> it.getType())
 				.collect(Collectors.toList());
 		if (argumentTypes.size() != parameterTypes.size())
@@ -101,7 +107,8 @@ public class OperationOverloadingResolver {
 		for (int i = 0; i < argumentTypes.size(); i++) {
 			Type type1 = argumentTypes.get(i);
 			Type type2 = parameterTypes.get(i);
-			if (!typeSystem.isSuperType(type2, type1))
+			
+			if (!typeSystem.isConvertableTo(type1, type2) && !typeSystem.isSuperType(type2, type1))
 				return false;
 		}
 		return true;

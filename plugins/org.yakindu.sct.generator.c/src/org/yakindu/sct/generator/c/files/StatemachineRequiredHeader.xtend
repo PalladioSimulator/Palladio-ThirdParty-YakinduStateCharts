@@ -24,6 +24,9 @@ import org.yakindu.sct.model.sgen.GeneratorEntry
 import org.yakindu.sct.model.stext.stext.OperationDefinition
 import org.yakindu.sct.model.stext.stext.StatechartScope
 
+import static org.yakindu.sct.generator.c.CGeneratorConstants.*
+import org.yakindu.sct.generator.c.GeneratorPredicate
+
 class StatemachineRequiredHeader implements IContentTemplate {
 
 	@Inject extension Naming cNaming
@@ -31,6 +34,7 @@ class StatemachineRequiredHeader implements IContentTemplate {
 	@Inject extension ICodegenTypeSystemAccess
 	@Inject extension GenmodelEntries
 	@Inject extension INamingService
+	@Inject extension GeneratorPredicate
 	
 	override content(ExecutionFlow it, GeneratorEntry entry, extension IGenArtifactConfigurations artifactConfigs) '''
 		«entry.licenseText»
@@ -39,7 +43,7 @@ class StatemachineRequiredHeader implements IContentTemplate {
 		#define «module.client.define»_H_
 
 		#include "«(typesModule.h).relativeTo(module.client.h)»"
-		«IF timed || operations.size > 0 || entry.tracingEnterState || entry.tracingExitState»
+		«IF timed || operations.size > 0 || entry.tracingUsed»
 		#include "«(module.h).relativeTo(module.client.h)»"
 		«ENDIF»
 
@@ -84,21 +88,21 @@ class StatemachineRequiredHeader implements IContentTemplate {
 		/*! 
 			This function will be called for each time event that is relevant for a state when a state will be entered.
 			\param evid An unique identifier of the event.
-			\time_ms The time in milli seconds
+			\time_ms The time in milliseconds
 			\periodic Indicates the the time event must be raised periodically until the timer is unset 
 		*/
-		extern void «setTimerFctID»(«scHandleDecl», const sc_eventid evid, const sc_integer time_ms, const sc_boolean periodic);
+		extern void «setTimerFctID»(«scHandleDecl», const «EVENT_TYPE» evid, const «INT_TYPE» time_ms, const «BOOL_TYPE» periodic);
 
 		/*! This function has to unset timers for the time events that are required by the state machine. */
 		/*! 
-			This function will be called for each time event taht is relevant for a state when a state will be left.
+			This function will be called for each time event that is relevant for a state when a state will be left.
 			\param evid An unique identifier of the event.
 		*/
-		extern void «unsetTimerFctID»(«scHandleDecl», const sc_eventid evid);
+		extern void «unsetTimerFctID»(«scHandleDecl», const «EVENT_TYPE» evid);
 		«ENDIF»
 		
 		
-		«IF entry.tracingEnterState || entry.tracingExitState»
+		«IF entry.tracingUsed»
 		/*!
 		 * Tracing callback functions
 		 */
@@ -133,7 +137,7 @@ class StatemachineRequiredHeader implements IContentTemplate {
 	def dispatch functionPrototypes(Declaration it) ''''''
 
 	def dispatch functionPrototypes(OperationDefinition it) '''
-		extern «typeSpecifier.targetLanguageName» «asFunction»(const «scHandleDecl»«FOR p : parameters BEFORE ', ' SEPARATOR ', '»«IF p.varArgs»...«ELSE»const «p.typeSpecifier.targetLanguageName» «p.name.asIdentifier»«ENDIF»«ENDFOR»);
+		extern «typeSpecifier.targetLanguageName» «asFunction»(«IF !needsInEventQueue(flow)»const«ENDIF» «scHandleDecl»«FOR p : parameters BEFORE ', ' SEPARATOR ', '»«IF p.varArgs»...«ELSE»const «p.typeSpecifier.targetLanguageName» «p.name.asIdentifier»«ENDIF»«ENDFOR»);
 	'''
 
 }

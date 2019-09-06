@@ -12,7 +12,9 @@ package org.yakindu.sct.generator.c.submodules.eventdriven
 
 import com.google.inject.Inject
 import org.yakindu.sct.generator.c.CGeneratorConstants
+import org.yakindu.sct.generator.c.GeneratorPredicate
 import org.yakindu.sct.generator.c.IGenArtifactConfigurations
+import org.yakindu.sct.generator.c.IHeaderFragment
 import org.yakindu.sct.generator.c.extensions.EventNaming
 import org.yakindu.sct.generator.c.extensions.Naming
 import org.yakindu.sct.generator.core.types.ICodegenTypeSystemAccess
@@ -20,7 +22,6 @@ import org.yakindu.sct.model.sexec.ExecutionFlow
 import org.yakindu.sct.model.sexec.extensions.SExecExtensions
 import org.yakindu.sct.model.sexec.naming.INamingService
 import org.yakindu.sct.model.sgen.GeneratorEntry
-import org.yakindu.sct.generator.c.IHeaderFragment
 
 class EventDrivenStatemachineHeaderFragment implements IHeaderFragment {
 	@Inject protected extension Naming
@@ -29,14 +30,15 @@ class EventDrivenStatemachineHeaderFragment implements IHeaderFragment {
 	@Inject protected extension INamingService
 	@Inject extension EventNaming
 	@Inject extension EventDrivenStatechartTypes
+	@Inject protected extension GeneratorPredicate
 	
 	override defines(ExecutionFlow it, GeneratorEntry entry, IGenArtifactConfigurations artifactConfigs) {
 		'''
 		#ifndef «bufferSize»
 		#define «bufferSize» «CGeneratorConstants.EVENT_QUEUE_BUFFER_SIZE»
 		#endif
-		#ifndef SC_INVALID_EVENT_VALUE
-		#define SC_INVALID_EVENT_VALUE 0
+		#ifndef «invalidEvent»
+		#define «invalidEvent» 0
 		#endif
 		'''
 	}
@@ -55,13 +57,17 @@ class EventDrivenStatemachineHeaderFragment implements IHeaderFragment {
 	
 	override types(ExecutionFlow it, GeneratorEntry entry, IGenArtifactConfigurations artifactConfigs) {
 		'''
+		«IF needsValueUnion»
 		«generateEventValueUnion»
+		«ENDIF»
 
-		«IF hasLocalEvents»
+		«IF hasQueuedEvents»
 		«generateEventsEnum»
 		
 		«generateEventStruct»
+		«ENDIF»
 		
+		«IF needsQueues»
 		«generateEventQueue»
 		«ENDIF»
 		'''

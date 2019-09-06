@@ -16,16 +16,18 @@ import org.eclipse.emf.ecore.EObject
 import org.yakindu.base.expressions.expressions.AssignmentExpression
 import org.yakindu.base.expressions.expressions.ElementReferenceExpression
 import org.yakindu.base.expressions.expressions.FeatureCall
+import org.yakindu.base.expressions.expressions.FloatLiteral
 import org.yakindu.base.expressions.expressions.LogicalRelationExpression
 import org.yakindu.base.expressions.expressions.RelationalOperator
 import org.yakindu.base.types.Declaration
 import org.yakindu.base.types.Event
 import org.yakindu.base.types.Operation
+import org.yakindu.base.types.Parameter
 import org.yakindu.base.types.Property
 import org.yakindu.base.types.inferrer.ITypeSystemInferrer
-import org.yakindu.base.types.typesystem.GenericTypeSystem
 import org.yakindu.base.types.typesystem.ITypeSystem
 import org.yakindu.sct.generator.core.templates.ExpressionsGenerator
+import org.yakindu.sct.model.sexec.Method
 import org.yakindu.sct.model.sexec.TimeEvent
 import org.yakindu.sct.model.sexec.extensions.SExecExtensions
 import org.yakindu.sct.model.stext.stext.ActiveStateReferenceExpression
@@ -59,7 +61,7 @@ class CSharpExpressionsGenerator extends ExpressionsGenerator {
 	}
 
 	def dispatch CharSequence code(LogicalRelationExpression expression) {
-		if (isSame(expression.leftOperand.infer.type, getType(GenericTypeSystem.STRING))) {
+		if (expression.leftOperand.infer.type.isString) {
 			expression.logicalString
 		} else
 			expression.leftOperand.code.toString.trim + expression.operator.literal + expression.rightOperand.code;
@@ -91,12 +93,16 @@ class CSharpExpressionsGenerator extends ExpressionsGenerator {
 		value.definition.context + value.definition.event.valueIdentifier
 	}
 
-	def dispatch CharSequence code(ElementReferenceExpression it) '''
-		«IF it.reference instanceof OperationDefinition»
-			«reference.code»(«FOR arg : expressions SEPARATOR ", "»«arg.code»«ENDFOR»)
-		«ELSE»
-			«definition.code»«ENDIF»
-	'''
+	def dispatch CharSequence code(ElementReferenceExpression it){
+		if(it.reference instanceof Operation) {
+			return '''«reference.code»(«FOR arg : expressions SEPARATOR ", "»«arg.code»«ENDFOR»)'''
+		} else if (it.reference instanceof Parameter) {
+			return '''«(it.reference as Parameter).name»'''
+		}
+		else {
+			return '''«definition.code»'''
+		}
+	}
 
 	def dispatch CharSequence code(FeatureCall it) '''
 		«IF feature instanceof Operation»
@@ -125,7 +131,7 @@ class CSharpExpressionsGenerator extends ExpressionsGenerator {
 	}
 
 	def getConstContext(Property it) {
-		if (scope !== null) {
+		if (interfaceScope !== null) {
 			return interfaceScope.interfaceName + "."
 		} else {
 			return it.flow.statemachineInterfaceName + "."
@@ -133,21 +139,25 @@ class CSharpExpressionsGenerator extends ExpressionsGenerator {
 	}
 
 	def dispatch CharSequence getContext(Event it) {
-		if (scope !== null) {
+		if (interfaceScope !== null) {
 			return interfaceScope.interfaceName.asEscapedIdentifier + "."
 		}
 		return ""
 	}
 
 	def dispatch CharSequence getContext(OperationDefinition it) {
-		if (scope !== null) {
+		if (interfaceScope !== null) {
 			return interfaceScope.interfaceName.asEscapedIdentifier + "."
 		}
 		return ""
 	}
+	
+	def dispatch CharSequence code(Method it) '''«functionName.asEscapedIdentifier»'''
 
 	def dispatch CharSequence getContext(EObject it) {
 		return "//ERROR: No context for " + it
 	}
+	
+	override dispatch CharSequence code(FloatLiteral it) '''«value.toString»f'''
 
 }

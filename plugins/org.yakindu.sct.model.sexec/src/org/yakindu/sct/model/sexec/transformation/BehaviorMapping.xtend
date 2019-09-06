@@ -19,8 +19,8 @@ import java.util.Set
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil
 import org.yakindu.base.expressions.expressions.BoolLiteral
-import org.yakindu.base.expressions.expressions.Expression
 import org.yakindu.base.expressions.expressions.ExpressionsFactory
+import org.yakindu.base.types.Expression
 import org.yakindu.sct.model.sexec.Check
 import org.yakindu.sct.model.sexec.Execution
 import org.yakindu.sct.model.sexec.ExecutionChoice
@@ -63,6 +63,8 @@ class BehaviorMapping {
 	@Inject extension SgraphExtensions sgraph
 	@Inject extension TraceExtensions trace
 	@Inject extension SequenceBuilder sb
+	
+	@Inject protected extension ExpressionBuilder exprBuilder
 
 
 	def ExecutionFlow mapEntryActions(Statechart statechart, ExecutionFlow r){
@@ -325,7 +327,7 @@ class BehaviorMapping {
 	}
 	
 	def Expression conjunct(Expression c1, Expression c2) {
-		if (c1 !== null && c2 !== null ) stext.and(c1 as Expression, c2 as Expression)
+		if (c1 !== null && c2 !== null ) stext.and(c1, c2)
 		else if (c1 !== null) c1
 		else c2
 	}
@@ -353,8 +355,8 @@ class BehaviorMapping {
 		)
 		
 		var content = statechart.eAllContents
-		val allStates = content.filter(typeof(State))
-		allStates.forEach( s | (s as State).mapStateLocalReactions);
+		val allStates = content.filter(State)
+		allStates.forEach( s |s.mapStateLocalReactions);
 		return r
 	}
 
@@ -494,8 +496,7 @@ class BehaviorMapping {
 				[ExecutionScope parentScope, ExecutionScope execScope | false ]
 			else
 				[ExecutionScope parentScope, ExecutionScope execScope | 
-					parentScope.stateVector.offset + parentScope.stateVector.size 
-					== execScope.stateVector.offset + execScope.stateVector.size
+					parentScope === execScope || parentScope.impactVector.last == execScope.impactVector.last
 				]
 		 
 		
@@ -503,7 +504,7 @@ class BehaviorMapping {
 			val state = region.parentStates.head
 			val execState = state.create
 									
-			val parents = state.parentStates.map(p|p.create as ExecutionState).filter(p| shouldExecuteParent.apply(p, execState) )
+			val parents = state.parentStates.map(p|p.create).filter(p| shouldExecuteParent.apply(p, execRegion) )
 			
 			parentNodes.addAll(parents.map(p|p as ExecutionNode))			
 			if ( shouldExecuteParent.apply( flow, execState) )
@@ -696,9 +697,9 @@ class BehaviorMapping {
 
 		// and map the elements to scopes...
 		targetPath.map( c | 
-			if ( c instanceof RegularState ) (c as RegularState).create as ExecutionScope
-			else if ( c instanceof Region ) (c as Region).create as ExecutionScope
-			else if ( c instanceof Statechart ) (c as Statechart).create as ExecutionScope
+			if ( c instanceof RegularState ) c.create as ExecutionScope
+			else if ( c instanceof Region ) c.create as ExecutionScope
+			else if ( c instanceof Statechart ) c.create as ExecutionScope
 		).toList
 	}
 	
@@ -791,22 +792,31 @@ class BehaviorMapping {
 	 }
 	
 	def dispatch Expression buildCondition (ReactionTrigger t) {
-		val triggerCheck = if (! t.triggers.empty) t.triggers.reverseView.fold(null as Expression,
+		
+		val hasTriggers = ! t.triggers.empty
+		val triggersAreAlwaysTrue = t.triggers.filter(AlwaysEvent).size > 0 
+		val triggerCheck = if (hasTriggers && !triggersAreAlwaysTrue) t.toTriggerCheck else null;
+		
+		val guard = t.buildGuard
+		
+		if ( triggerCheck !== null && guard !== null )  stext.and(stext.parenthesis(triggerCheck), stext.parenthesis(guard))
+		else if ( triggerCheck !== null )  triggerCheck
+		else if ( guard !== null ) guard
+		else if ( triggersAreAlwaysTrue ) _true
+	}
+	
+	
+	def toTriggerCheck(ReactionTrigger t) {
+		t.triggers.reverseView.fold(null as Expression,
 			[s,e | {
 				val Expression raised = e.raised()
 				
 				if (raised === null) s
 				else if (s===null) raised  
 				else raised.or(s)
-			}]
-		) else null;
-		
-		val guard = t.buildGuard
-		
-		if ( triggerCheck !== null && guard !== null )  stext.and(stext.parenthesis(triggerCheck), stext.parenthesis(guard))
-		else if ( triggerCheck !== null )  triggerCheck
-		else guard
+			}])		
 	}
+	
 	
 	def dispatch Expression buildGuard( Trigger t) {null}
 	

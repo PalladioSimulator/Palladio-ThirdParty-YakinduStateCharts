@@ -24,16 +24,16 @@ import static org.yakindu.base.types.typesystem.ITypeSystem.*
 class JavaTypeSystemAccess implements ICodegenTypeSystemAccess {
 
 	@Inject
-	private extension ITypeSystem ts
+	protected extension ITypeSystem ts
 
 	override String getTargetLanguageName(Type type) {
 		val originalType = type?.originType
 		switch (originalType) {
 			case originalType === null || ts.isSame(originalType, getType(VOID)) : 'void'
-			case ts.isSame(originalType, getType(REAL)): "double"
-			case ts.isSame(originalType, getType(INTEGER)): "long"
-			case ts.isSame(originalType, getType(BOOLEAN)): "boolean"
-			case ts.isSame(originalType, getType(STRING)): "String"
+			case ts.isReal(originalType): "double"
+			case ts.isInteger(originalType): "long"
+			case ts.isBoolean(originalType): "boolean"
+			case ts.isString(originalType): "String"
 			default: "//" + this
 		};
 	}

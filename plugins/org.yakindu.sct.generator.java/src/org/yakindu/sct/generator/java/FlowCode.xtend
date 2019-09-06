@@ -11,6 +11,7 @@
 package org.yakindu.sct.generator.java
 
 import com.google.inject.Inject
+import java.util.List
 import org.yakindu.sct.model.sexec.Call
 import org.yakindu.sct.model.sexec.Check
 import org.yakindu.sct.model.sexec.CheckRef
@@ -19,17 +20,23 @@ import org.yakindu.sct.model.sexec.Execution
 import org.yakindu.sct.model.sexec.ExitState
 import org.yakindu.sct.model.sexec.HistoryEntry
 import org.yakindu.sct.model.sexec.If
+import org.yakindu.sct.model.sexec.LocalVariableDefinition
 import org.yakindu.sct.model.sexec.Reaction
+import org.yakindu.sct.model.sexec.Return
 import org.yakindu.sct.model.sexec.SaveHistory
 import org.yakindu.sct.model.sexec.ScheduleTimeEvent
 import org.yakindu.sct.model.sexec.Sequence
 import org.yakindu.sct.model.sexec.StateSwitch
+import org.yakindu.sct.model.sexec.Statement
 import org.yakindu.sct.model.sexec.Step
+import org.yakindu.sct.model.sexec.TimeEvent
+import org.yakindu.sct.model.sexec.Trace
+import org.yakindu.sct.model.sexec.TraceStateEntered
+import org.yakindu.sct.model.sexec.TraceStateExited
 import org.yakindu.sct.model.sexec.UnscheduleTimeEvent
 import org.yakindu.sct.model.sexec.extensions.SExecExtensions
-import java.util.List
-import org.yakindu.sct.model.sexec.TimeEvent
 import org.yakindu.sct.model.sexec.naming.INamingService
+import org.yakindu.sct.model.sgen.GeneratorEntry
 
 class FlowCode {
 	
@@ -37,8 +44,11 @@ class FlowCode {
 	@Inject extension INamingService
 	@Inject extension JavaExpressionsGenerator
 	@Inject extension SExecExtensions
+	@Inject extension GenmodelEntries
 	
-	private var List<TimeEvent> timeEvents;
+	@Inject GeneratorEntry entry
+	
+	var List<TimeEvent> timeEvents;
 	
 	def stepComment(Step it) '''
 		«IF comment !== null && ! comment.empty»
@@ -48,6 +58,25 @@ class FlowCode {
 	
 	def dispatch code(Step it) '''
 		//ERROR: FlowCode for Step '«getClass().name»' not defined
+	'''
+	
+	// ignore all trace steps not explicitly suppotrrted
+	def dispatch CharSequence code(Trace it)''''''
+	
+	def dispatch CharSequence code(TraceStateEntered it) '''
+		«IF entry.tracingEnterState»
+		for(«traceInterface»<State> «traceSingleInstance» : «traceInstances») {
+			«traceSingleInstance».«stateEnteredTraceFunctionID»(State.«it.state.stateName»);
+		}
+		«ENDIF»
+	'''
+	
+	def dispatch CharSequence code(TraceStateExited it) '''
+		«IF entry.tracingExitState»
+		for(«traceInterface»<State> «traceSingleInstance» : «traceInstances») {
+			«traceSingleInstance».«stateExitedTraceFunctionID»(State.«it.state.stateName»);
+		}
+		«ENDIF»
 	'''
 	
 	def dispatch CharSequence code(StateSwitch it) '''
@@ -127,7 +156,7 @@ class FlowCode {
 	
 	def dispatch CharSequence code(HistoryEntry it) '''
 		«stepComment»
-		if (historyVector[«region.historyVector.offset»] != State.$NullState$) {
+		if (historyVector[«region.historyVector.offset»] != State.«getNullStateName()») {
 			«historyStep.code»
 		} «IF initialStep !== null»else {
 			«initialStep.code»
@@ -145,4 +174,16 @@ class FlowCode {
 		}
 		return timeEvents
 	}
+	
+	def dispatch CharSequence code(Return it) '''
+		return«IF value !== null» «value.code»«ENDIF»;
+	'''
+	
+	def dispatch CharSequence code(LocalVariableDefinition it) '''
+		«variable.typeSpecifier.type» «variable.name»«IF initialValue !== null» = «initialValue.code»«ENDIF»;
+	'''
+	
+	def dispatch CharSequence code(Statement it) 
+		'''«expression.code»;'''
+
 }

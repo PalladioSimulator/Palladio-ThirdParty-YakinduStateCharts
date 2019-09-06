@@ -17,18 +17,20 @@ import org.yakindu.base.expressions.expressions.ArgumentExpression
 import org.yakindu.base.expressions.expressions.AssignmentExpression
 import org.yakindu.base.expressions.expressions.AssignmentOperator
 import org.yakindu.base.expressions.expressions.ElementReferenceExpression
-import org.yakindu.base.expressions.expressions.Expression
 import org.yakindu.base.expressions.expressions.FeatureCall
+import org.yakindu.base.expressions.expressions.FloatLiteral
 import org.yakindu.base.expressions.expressions.LogicalRelationExpression
 import org.yakindu.base.expressions.expressions.PrimitiveValueExpression
 import org.yakindu.base.expressions.expressions.RelationalOperator
 import org.yakindu.base.types.Declaration
+import org.yakindu.base.types.Expression
 import org.yakindu.base.types.Operation
+import org.yakindu.base.types.Parameter
 import org.yakindu.base.types.Property
 import org.yakindu.base.types.inferrer.ITypeSystemInferrer
-import org.yakindu.base.types.typesystem.GenericTypeSystem
 import org.yakindu.base.types.typesystem.ITypeSystem
 import org.yakindu.sct.generator.core.templates.ExpressionsGenerator
+import org.yakindu.sct.model.sexec.LocalVariableDefinition
 import org.yakindu.sct.model.sexec.TimeEvent
 import org.yakindu.sct.model.sexec.extensions.SExecExtensions
 import org.yakindu.sct.model.stext.stext.ActiveStateReferenceExpression
@@ -44,7 +46,7 @@ class JavaExpressionsGenerator extends ExpressionsGenerator {
 	@Inject protected extension ITypeSystem
 	@Inject protected extension ITypeSystemInferrer
 
-	private var List<TimeEvent> timeEvents;
+	var List<TimeEvent> timeEvents;
 
 	def private getTimeEvents(TimeEvent it) {
 		if (timeEvents === null) {
@@ -61,10 +63,14 @@ class JavaExpressionsGenerator extends ExpressionsGenerator {
 	override dispatch String code(AssignmentExpression it) {
 		if (varRef.definition instanceof Property) {
 			var property = varRef.definition as Property
-			if (eContainer instanceof Expression) {
-				return '''«property.getContext»«property.assign»(«assignCmdArgument(property)»)'''
+			if (property.eContainer instanceof LocalVariableDefinition) {
+				return '''«property.getContext»«property.name» = «assignCmdArgument(property)»'''
 			} else {
-				return '''«property.getContext»«property.setter»(«assignCmdArgument(property)»)'''
+				if (eContainer instanceof Expression) {
+					return '''«property.getContext»«property.assign»(«assignCmdArgument(property)»)'''
+				} else {
+					return '''«property.getContext»«property.setter»(«assignCmdArgument(property)»)'''
+				}
 			}
 		}
 	}
@@ -88,7 +94,7 @@ class JavaExpressionsGenerator extends ExpressionsGenerator {
 	}
 
 	def dispatch String code(LogicalRelationExpression expression) {
-		if (isSame(expression.leftOperand.infer.type, getType(GenericTypeSystem.STRING))) {
+		if (expression.leftOperand.infer.type.isString) {
 			expression.logicalString
 		} else
 			expression.leftOperand.code + expression.operator.literal + expression.rightOperand.code;
@@ -121,17 +127,22 @@ class JavaExpressionsGenerator extends ExpressionsGenerator {
 	}
 
 	def protected dispatch String code(ElementReferenceExpression it) {
-		(it.reference as Declaration).codeDeclaration(it).toString
+		if(it.reference instanceof Parameter) {
+			(it.reference as Parameter).name
+		}
+		else {
+			(it.reference as Declaration).codeDeclaration(it).toString
+		}
 	}
 
 	def protected dispatch String code(FeatureCall it) {
-		(it.feature as Declaration).codeDeclaration(it).toString
+		it.feature.codeDeclaration(it).toString
 	}
 
 	def protected codeDeclaration(Declaration it, ArgumentExpression exp) {
 		switch it {
 			Operation:
-				return operationCall(it, exp.expressions)
+				return operationCall(it, exp)
 			Property case exp.isAssignmentContained:
 				return getStaticContext + identifier
 			Property case exp.isPropertyContained:
@@ -141,8 +152,8 @@ class JavaExpressionsGenerator extends ExpressionsGenerator {
 		}
 	}
 
-	def protected String operationCall(Operation it, List<Expression> args) {
-		'''«code»(«FOR arg : args SEPARATOR ", "»«arg.code»«ENDFOR»)'''
+	def protected String operationCall(Operation it, ArgumentExpression exp) {
+		'''«code»(«FOR arg : exp.expressions SEPARATOR ", "»«arg.code»«ENDFOR»)'''
 	}
 
 	def dispatch String code(Declaration it) {
@@ -150,6 +161,9 @@ class JavaExpressionsGenerator extends ExpressionsGenerator {
 	}
 
 	def dispatch String code(Property it) {
+		if(eContainer instanceof LocalVariableDefinition){
+			return it.name
+		}
 		getContext + getter
 	}
 
@@ -209,5 +223,6 @@ class JavaExpressionsGenerator extends ExpressionsGenerator {
 		}
 		return false // default
 	}
-
+	
+	override dispatch CharSequence code(FloatLiteral it) '''«value.toString»f'''
 }

@@ -67,6 +67,7 @@ public class NumericalAddSubtractExpressionImpl extends BinaryExpressionImpl imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public AdditiveOperator getOperator() {
 		return operator;
 	}
@@ -76,6 +77,7 @@ public class NumericalAddSubtractExpressionImpl extends BinaryExpressionImpl imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOperator(AdditiveOperator newOperator) {
 		AdditiveOperator oldOperator = operator;
 		operator = newOperator == null ? OPERATOR_EDEFAULT : newOperator;
@@ -150,7 +152,7 @@ public class NumericalAddSubtractExpressionImpl extends BinaryExpressionImpl imp
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (operator: ");
 		result.append(operator);
 		result.append(')');

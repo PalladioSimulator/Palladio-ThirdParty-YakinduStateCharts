@@ -8,9 +8,10 @@ import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.yakindu.base.expressions.expressions.Expression;
 import org.yakindu.base.expressions.expressions.ExpressionsPackage;
 import org.yakindu.base.expressions.expressions.UnaryExpression;
+import org.yakindu.base.types.Expression;
+import org.yakindu.base.types.impl.ExpressionImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -60,6 +61,7 @@ public abstract class UnaryExpressionImpl extends ExpressionImpl implements Unar
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Expression getOperand() {
 		return operand;
 	}
@@ -84,6 +86,7 @@ public abstract class UnaryExpressionImpl extends ExpressionImpl implements Unar
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOperand(Expression newOperand) {
 		if (newOperand != operand) {
 			NotificationChain msgs = null;
@@ -103,6 +106,7 @@ public abstract class UnaryExpressionImpl extends ExpressionImpl implements Unar
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Enumerator getOperator() {
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT

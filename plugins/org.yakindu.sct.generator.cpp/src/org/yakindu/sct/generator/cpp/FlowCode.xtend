@@ -11,6 +11,8 @@
 package org.yakindu.sct.generator.cpp
 
 import com.google.inject.Inject
+import org.yakindu.sct.generator.c.extensions.GenmodelEntries
+import org.yakindu.sct.generator.c.types.CLiterals
 import org.yakindu.sct.model.sexec.Call
 import org.yakindu.sct.model.sexec.Check
 import org.yakindu.sct.model.sexec.CheckRef
@@ -26,9 +28,14 @@ import org.yakindu.sct.model.sexec.ScheduleTimeEvent
 import org.yakindu.sct.model.sexec.Sequence
 import org.yakindu.sct.model.sexec.StateSwitch
 import org.yakindu.sct.model.sexec.Statement
+import org.yakindu.sct.model.sexec.TraceStateEntered
+import org.yakindu.sct.model.sexec.TraceStateExited
 import org.yakindu.sct.model.sexec.UnscheduleTimeEvent
 import org.yakindu.sct.model.sexec.extensions.SExecExtensions
 import org.yakindu.sct.model.sexec.naming.INamingService
+import org.yakindu.sct.model.sgen.GeneratorEntry
+
+import static org.yakindu.sct.generator.c.CGeneratorConstants.*
 
 class FlowCode extends org.yakindu.sct.generator.c.FlowCode {
 	
@@ -36,15 +43,19 @@ class FlowCode extends org.yakindu.sct.generator.c.FlowCode {
 	@Inject extension CppExpressionsGenerator expressions
 	@Inject extension SExecExtensions
 	@Inject extension INamingService
+	@Inject extension GenmodelEntries
+	@Inject extension CLiterals
+	
+	@Inject GeneratorEntry entry
 	
 	override dispatch CharSequence code(SaveHistory it) '''
 		«stepComment»
-		historyVector[«region.historyVector.offset»] = stateConfVector[«region.stateVector.offset»];
+		«HISTORYVECTOR»[«region.historyVector.offset»] = «STATEVECTOR»[«region.stateVector.offset»];
 	'''
 	
 	override dispatch CharSequence code(HistoryEntry it) '''
 		«stepComment»
-		if (historyVector[«region.historyVector.offset»] != «null_state»)
+		if («HISTORYVECTOR»[«region.historyVector.offset»] != «null_state»)
 		{
 			«historyStep.code»
 		} «IF initialStep !== null»else
@@ -56,10 +67,10 @@ class FlowCode extends org.yakindu.sct.generator.c.FlowCode {
 	override dispatch CharSequence code(StateSwitch it) '''
 		«stepComment»
 		«IF historyRegion !== null»
-			switch(historyVector[ «historyRegion.historyVector.offset» ])
+			switch(«HISTORYVECTOR»[ «historyRegion.historyVector.offset» ])
 			{
 		«ELSE»
-			switch(stateConfVector[ «stateConfigurationIdx» ])
+			switch(«STATEVECTOR»[ «stateConfigurationIdx» ])
 			{
 		«ENDIF»
 			«FOR caseid : cases»
@@ -72,15 +83,31 @@ class FlowCode extends org.yakindu.sct.generator.c.FlowCode {
 			default: break;
 		}
 	'''
+	
+	override dispatch CharSequence code(TraceStateEntered it) '''
+		«IF entry.tracingEnterState»
+		if(«flow.tracingInstance» != «NULL_LITERAL») {
+			«flow.tracingInstance»->«flow.enterStateTracingFctID»(«flow.module»::«it.state.stateName»);
+		}
+		«ENDIF»
+	'''
+	
+	override dispatch CharSequence code(TraceStateExited it) '''
+		«IF entry.tracingExitState»
+		if(«flow.tracingInstance» != «NULL_LITERAL») {
+			«flow.tracingInstance»->«flow.exitStateTracingFctID»(«flow.module»::«it.state.stateName»);
+		}
+		«ENDIF»
+	'''
 
 	override dispatch CharSequence code(ScheduleTimeEvent it) '''
 		«stepComment»
-		«timerInstance»->setTimer(this, (sc_eventid)(&«timeEventsInstance»[«timeEvent.indexOf»]), «timeValue.code», «IF timeEvent.periodic»true«ELSE»false«ENDIF»);
+		«timerInstance»->«SET_TIMER»(this, (sc_eventid)(&«timeEventsInstance»[«timeEvent.indexOf»]), «timeValue.code», «IF timeEvent.periodic»true«ELSE»false«ENDIF»);
 	'''
 
 	override dispatch CharSequence code(UnscheduleTimeEvent it) '''
 		«stepComment»
-		«timerInstance»->unsetTimer(this, (sc_eventid)(&«timeEventsInstance»[«timeEvent.indexOf»]));
+		«timerInstance»->«UNSET_TIMER»(this, (sc_eventid)(&«timeEventsInstance»[«timeEvent.indexOf»]));
 	'''
 	
 	override dispatch CharSequence code(Execution it) 
@@ -115,13 +142,13 @@ class FlowCode extends org.yakindu.sct.generator.c.FlowCode {
 	'''
 	
 	override dispatch CharSequence code(EnterState it) '''
-		stateConfVector[«state.stateVector.offset»] = «state.shortName»;
-		stateConfVectorPosition = «state.stateVector.offset»;
+		«STATEVECTOR»[«state.stateVector.offset»] = «state.shortName»;
+		«STATEVECTOR_POS» = «state.stateVector.offset»;
 	'''
 
 	override dispatch CharSequence code(ExitState it) '''
-		stateConfVector[«state.stateVector.offset»] = «null_state»;
-		stateConfVectorPosition = «state.stateVector.offset»;
+		«STATEVECTOR»[«state.stateVector.offset»] = «null_state»;
+		«STATEVECTOR_POS» = «state.stateVector.offset»;
 	'''
 	
 	override dispatch CharSequence code(Return it) '''

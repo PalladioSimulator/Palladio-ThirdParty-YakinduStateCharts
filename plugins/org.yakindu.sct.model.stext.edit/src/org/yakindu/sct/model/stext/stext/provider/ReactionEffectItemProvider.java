@@ -168,11 +168,6 @@ public class ReactionEffectItemProvider extends EffectItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(StextPackage.Literals.REACTION_EFFECT__ACTIONS,
-				 StextFactory.eINSTANCE.createArgumentedAnnotation()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(StextPackage.Literals.REACTION_EFFECT__ACTIONS,
 				 ExpressionsFactory.eINSTANCE.createAssignmentExpression()));
 
 		newChildDescriptors.add
@@ -249,6 +244,11 @@ public class ReactionEffectItemProvider extends EffectItemProvider
 			(createChildParameter
 				(StextPackage.Literals.REACTION_EFFECT__ACTIONS,
 				 ExpressionsFactory.eINSTANCE.createFeatureCall()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(StextPackage.Literals.REACTION_EFFECT__ACTIONS,
+				 ExpressionsFactory.eINSTANCE.createMetaCall()));
 
 		newChildDescriptors.add
 			(createChildParameter
