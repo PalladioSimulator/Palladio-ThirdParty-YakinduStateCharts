@@ -14,8 +14,8 @@ import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.yakindu.sct.domain.validation.DomainValidator;
 import org.yakindu.sct.model.sgraph.SGraphPackage;
-import org.yakindu.sct.model.sgraph.validation.DomainValidator;
 
 /**
  * 

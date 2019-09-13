@@ -15,7 +15,6 @@ import java.util.List
 import org.yakindu.sct.generator.c.IGenArtifactConfigurations
 import org.yakindu.sct.generator.c.IncludeProvider
 import org.yakindu.sct.model.sexec.ExecutionFlow
-import org.yakindu.sct.model.sexec.extensions.SExecExtensions
 
 /**
  * @author robert rudi
@@ -24,11 +23,11 @@ import org.yakindu.sct.model.sexec.extensions.SExecExtensions
  */
 class CppEventDrivenIncludeProvider implements IncludeProvider {
 	
-	@Inject protected extension SExecExtensions
+	@Inject protected extension EventDrivenPredicate
 	
 	override getIncludes(ExecutionFlow it, extension IGenArtifactConfigurations artifactConfigs) {
 		val List<CharSequence> includes = newArrayList
-		if (hasLocalEvents) {
+		if (needsQueues) {
 			includes += "#include <deque>"
 		}
 		includes

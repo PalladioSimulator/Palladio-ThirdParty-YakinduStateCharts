@@ -10,10 +10,14 @@
  */
 package org.yakindu.sct.generator.genmodel.ui.wizard;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IFile;
@@ -21,7 +25,9 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
@@ -53,11 +59,13 @@ import org.yakindu.sct.generator.core.extensions.FileExtensions;
 import org.yakindu.sct.generator.core.extensions.GeneratorExtensions;
 import org.yakindu.sct.generator.core.extensions.IGeneratorDescriptor;
 import org.yakindu.sct.generator.genmodel.ui.PathToImageResolver;
+import org.yakindu.sct.ui.install.InstallWizardOpener;
 import org.yakindu.sct.ui.wizards.AbstractWorkspaceLabelProvider;
 import org.yakindu.sct.ui.wizards.ModelCreationWizardPage;
 import org.yakindu.sct.ui.wizards.WorkspaceTreeContentProvider;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * 
@@ -69,11 +77,11 @@ import com.google.common.collect.Lists;
  */
 public class SGenWizardPage2 extends WizardPage {
 
-	private final static Map<String, CoreGenerator> PROJECT_NATURES = new TreeMap<String, CoreGenerator>();
+	private final static Map<String, CoreGenerator> NATURE_TO_GENERATOR = new TreeMap<String, CoreGenerator>();
 	static {
-		PROJECT_NATURES.put("org.eclipse.cdt.core.cnature", CoreGenerator.C);
-		PROJECT_NATURES.put("org.eclipse.cdt.core.ccnature", CoreGenerator.Cpp);
-		PROJECT_NATURES.put(JavaCore.NATURE_ID, CoreGenerator.Java);
+		NATURE_TO_GENERATOR.put("org.eclipse.cdt.core.cnature", CoreGenerator.C);
+		NATURE_TO_GENERATOR.put("org.eclipse.cdt.core.ccnature", CoreGenerator.Cpp);
+		NATURE_TO_GENERATOR.put(JavaCore.NATURE_ID, CoreGenerator.Java);
 	}
 
 	private ComboViewer generatorCombo;
@@ -152,24 +160,78 @@ public class SGenWizardPage2 extends WizardPage {
 		Collections.sort(descriptors, CoreGenerator.generatorOrder);
 		generatorCombo.setInput(descriptors);
 		generatorCombo.getCombo().select(0);
+		Optional<CoreGenerator> preferredByNature = getGeneratorForNature(getContextProject());
+		if (preferredByNature.isPresent()) {
+			Optional<IGeneratorDescriptor> desc = descriptors.stream()
+					.filter(d -> d.getId().equals(preferredByNature.get().getId())).findFirst();
+			if (desc.isPresent()) {
+				generatorCombo.getCombo().select(descriptors.indexOf(desc.get()));
+			}
+		}
 		generatorCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				refreshInput();
+				Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
+				if (element instanceof InstallMoreGeneratorsItem) {
+					try {
+						getContainer().run(true, true, (monitor) -> {
+							((InstallMoreGeneratorsItem) element).openInstallWizard(monitor);
+						});
+					} catch (InvocationTargetException | InterruptedException e) {
+						e.printStackTrace();
+					}
+					generatorCombo.getCombo().select(0);
+				} else {
+					refreshInput();
+				}
 			}
+
 		});
+		generatorCombo.add(new InstallMoreGeneratorsItem());
+	}
+
+	private Optional<CoreGenerator> getGeneratorForNature(IProject project) {
+		for (Entry<String, CoreGenerator> entry : NATURE_TO_GENERATOR.entrySet()) {
+			try {
+				if (project.hasNature(entry.getKey())) {
+					return Optional.of(entry.getValue());
+				}
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
+		return Optional.empty();
 	}
 
 	protected void refreshInput() {
 		lblNewLabel.setText("Choose: " + getSelectedGenerator().getContentType());
 		((WorkspaceTreeContentProvider) resourceTree.getContentProvider())
 				.setFileExtension(FileExtensions.getFileExtension(getSelectedGenerator().getId()));
-		resourceTree.setInput(getSelectedProject());
+		resourceTree.setInput(getRelevantProjects());
 	}
 
-	protected IProject getSelectedProject() {
+	protected List<IProject> getRelevantProjects() {
+		List<IProject> relevantProjects = Lists.newArrayList();
+		IProject project = getContextProject();
+		relevantProjects.add(project);
+		relevantProjects.addAll(getReferencedProjects(project));
+		return relevantProjects;
+	}
+
+	protected IProject getContextProject() {
 		IPath containerPath = fileSelectionPage.getFilePath();
 		IFolder folder = ResourcesPlugin.getWorkspace().getRoot().getFolder(containerPath);
-		return folder.getProject();
+		IProject project = folder.getProject();
+		return project;
+	}
+	
+	protected List<IProject> getReferencedProjects(IProject project) {
+		try {
+			IProject[] referencedProjects = project.getReferencedProjects();
+			return Arrays.asList(referencedProjects);
+		} catch (CoreException e) {
+			e.printStackTrace();
+			return Collections.emptyList();
+		}
 	}
 
 	public List<EObject> getSelectedElements() {
@@ -216,10 +278,14 @@ public class SGenWizardPage2 extends WizardPage {
 
 	private static class GeneratorDescriptorLabelProvider extends LabelProvider {
 
+		
 		@Override
 		public String getText(Object element) {
 			if (element instanceof IGeneratorDescriptor) {
 				return ((IGeneratorDescriptor) element).getName();
+			}
+			if (element instanceof InstallMoreGeneratorsItem) {
+				return ((InstallMoreGeneratorsItem) element).getText();
 			}
 			return super.getText(element);
 		}
@@ -245,4 +311,21 @@ public class SGenWizardPage2 extends WizardPage {
 		}
 
 	}
+	
+	protected static class InstallMoreGeneratorsItem {
+		
+		private static final String LABS_REPO_URI = "http://updates.yakindu.com/statecharts/labs";
+
+		public String getText() {
+			return "Install more...";
+		}
+		
+		public void openInstallWizard(IProgressMonitor monitor) {
+			Map<String, Set<String>> deps = Maps.newHashMap();
+			deps.put(LABS_REPO_URI, Collections.emptySet());
+			new InstallWizardOpener().open(deps, monitor);
+		}
+	}
+
+	
 }

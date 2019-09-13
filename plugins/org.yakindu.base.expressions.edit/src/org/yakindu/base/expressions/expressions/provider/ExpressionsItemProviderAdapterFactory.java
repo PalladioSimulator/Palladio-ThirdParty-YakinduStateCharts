@@ -630,6 +630,29 @@ public class ExpressionsItemProviderAdapterFactory extends ExpressionsAdapterFac
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.yakindu.base.expressions.expressions.MetaCall} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected MetaCallItemProvider metaCallItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.yakindu.base.expressions.expressions.MetaCall}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createMetaCallAdapter() {
+		if (metaCallItemProvider == null) {
+			metaCallItemProvider = new MetaCallItemProvider(this);
+		}
+
+		return metaCallItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link org.yakindu.base.expressions.expressions.ElementReferenceExpression} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -727,6 +750,7 @@ public class ExpressionsItemProviderAdapterFactory extends ExpressionsAdapterFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ComposeableAdapterFactory getRootAdapterFactory() {
 		return parentAdapterFactory == null ? this : parentAdapterFactory.getRootAdapterFactory();
 	}
@@ -737,6 +761,7 @@ public class ExpressionsItemProviderAdapterFactory extends ExpressionsAdapterFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setParentAdapterFactory(ComposedAdapterFactory parentAdapterFactory) {
 		this.parentAdapterFactory = parentAdapterFactory;
 	}
@@ -785,6 +810,7 @@ public class ExpressionsItemProviderAdapterFactory extends ExpressionsAdapterFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void addListener(INotifyChangedListener notifyChangedListener) {
 		changeNotifier.addListener(notifyChangedListener);
 	}
@@ -795,6 +821,7 @@ public class ExpressionsItemProviderAdapterFactory extends ExpressionsAdapterFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void removeListener(INotifyChangedListener notifyChangedListener) {
 		changeNotifier.removeListener(notifyChangedListener);
 	}
@@ -805,6 +832,7 @@ public class ExpressionsItemProviderAdapterFactory extends ExpressionsAdapterFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void fireNotifyChanged(Notification notification) {
 		changeNotifier.fireNotifyChanged(notification);
 
@@ -819,6 +847,7 @@ public class ExpressionsItemProviderAdapterFactory extends ExpressionsAdapterFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void dispose() {
 		if (boolLiteralItemProvider != null) boolLiteralItemProvider.dispose();
 		if (intLiteralItemProvider != null) intLiteralItemProvider.dispose();
@@ -844,6 +873,7 @@ public class ExpressionsItemProviderAdapterFactory extends ExpressionsAdapterFac
 		if (postFixUnaryExpressionItemProvider != null) postFixUnaryExpressionItemProvider.dispose();
 		if (primitiveValueExpressionItemProvider != null) primitiveValueExpressionItemProvider.dispose();
 		if (featureCallItemProvider != null) featureCallItemProvider.dispose();
+		if (metaCallItemProvider != null) metaCallItemProvider.dispose();
 		if (elementReferenceExpressionItemProvider != null) elementReferenceExpressionItemProvider.dispose();
 		if (parenthesizedExpressionItemProvider != null) parenthesizedExpressionItemProvider.dispose();
 		if (typeCastExpressionItemProvider != null) typeCastExpressionItemProvider.dispose();

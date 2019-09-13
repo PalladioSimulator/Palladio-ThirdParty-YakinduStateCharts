@@ -22,7 +22,6 @@ import org.yakindu.sct.model.sgraph.State;
 import org.yakindu.sct.model.sgraph.Statechart;
 import org.yakindu.sct.model.sgraph.Transition;
 import org.yakindu.sct.model.sgraph.resource.AbstractSCTResource;
-import org.yakindu.sct.model.stext.stext.ArgumentedAnnotation;
 import org.yakindu.sct.model.stext.stext.StateSpecification;
 import org.yakindu.sct.model.stext.stext.StatechartSpecification;
 import org.yakindu.sct.model.stext.stext.TransitionReaction;
@@ -34,8 +33,6 @@ import org.yakindu.sct.model.stext.stext.TransitionSpecification;
  * 
  */
 public class StextResource extends AbstractSCTResource {
-
-	private static final String NEW_LINE = System.lineSeparator();
 
 	public StextResource() {
 		this(null);
@@ -67,8 +64,6 @@ public class StextResource extends AbstractSCTResource {
 		EList<Reaction> reactions = scope.getReactions();
 		StringBuilder builder = new StringBuilder();
 		for (Reaction reaction : reactions) {
-			if (builder.length() > 0)
-				builder.append(NEW_LINE);
 			builder.append(serializeReaction(reaction));
 		}
 		state.setSpecification(builder.toString());
@@ -105,7 +100,7 @@ public class StextResource extends AbstractSCTResource {
 		}
 
 		statechart.getAnnotations().clear();
-		EList<ArgumentedAnnotation> annotations = rootASTElement.getAnnotations();
+		EList<Annotation> annotations = rootASTElement.getAnnotations();
 		if (annotations != null) {
 			statechart.getAnnotations().addAll(annotations);
 		}

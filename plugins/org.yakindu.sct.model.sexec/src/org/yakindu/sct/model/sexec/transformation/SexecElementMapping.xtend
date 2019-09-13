@@ -17,12 +17,11 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.util.Strings
 import org.yakindu.base.base.NamedElement
-import org.yakindu.base.expressions.expressions.BoolLiteral
 import org.yakindu.base.expressions.expressions.ElementReferenceExpression
-import org.yakindu.base.expressions.expressions.Expression
 import org.yakindu.base.expressions.expressions.ExpressionsFactory
 import org.yakindu.base.expressions.expressions.FeatureCall
 import org.yakindu.base.types.Event
+import org.yakindu.base.types.Expression
 import org.yakindu.sct.model.sexec.Call
 import org.yakindu.sct.model.sexec.Check
 import org.yakindu.sct.model.sexec.CheckRef
@@ -53,7 +52,6 @@ import org.yakindu.sct.model.sgraph.Statechart
 import org.yakindu.sct.model.sgraph.Synchronization
 import org.yakindu.sct.model.sgraph.Transition
 import org.yakindu.sct.model.sgraph.Trigger
-import org.yakindu.sct.model.stext.stext.AlwaysEvent
 import org.yakindu.sct.model.stext.stext.EventDefinition
 import org.yakindu.sct.model.stext.stext.EventSpec
 import org.yakindu.sct.model.stext.stext.ImportScope
@@ -289,22 +287,6 @@ import org.yakindu.sct.model.stext.stext.VariableDefinition
 	def dispatch Expression raised(TimeEventSpec e) {
 		val r = factory.createElementReferenceExpression
 		r.reference = e.createDerivedEvent
-		return r
-	}
-
-//	def dispatch Expression raised(OnCycleEvent e) {
-//		val r = stext.factory.createPrimitiveValueExpression
-//		val BoolLiteral boolLit = stext.factory.createBoolLiteral
-//		boolLit.value = true		
-//		r.value = boolLit
-//		return r
-//	}
-	
-	def dispatch Expression raised(AlwaysEvent e) {
-		val r = factory.createPrimitiveValueExpression
-		val BoolLiteral boolLit = factory.createBoolLiteral
-		boolLit.value = true		
-		r.value = boolLit
 		return r
 	}
 

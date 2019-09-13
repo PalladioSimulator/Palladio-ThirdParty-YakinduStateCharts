@@ -80,12 +80,10 @@ class DefaultExecutionFlowInterpreter implements IExecutionFlowInterpreter, IEve
 	@Inject(optional=true)
 	ITraceStepInterpreter traceInterpreter
 	@Inject protected extension ExecutionContextExtensions
-	@Inject
+	@Inject 
 	protected StateVectorExtensions stateVectorExtensions;
 	@Inject
 	protected extension StatechartAnnotations
-	@Inject
-	extension ITypeValueProvider
 
 	protected ExecutionFlow flow
 	protected ExecutionContext executionContext
@@ -153,10 +151,14 @@ class DefaultExecutionFlowInterpreter implements IExecutionFlowInterpreter, IEve
 	}
 
 	override runCycle() {
+		// TODO Should not care about cycle adapter here - move to simulation engine where it is defined.  
 		val cycleAdapter = EcoreUtil.getExistingAdapter(executionContext, EventDrivenCycleAdapter) as EventDrivenCycleAdapter
 		try {
 			if(cycleAdapter !== null )
 				executionContext.eAdapters.remove(cycleAdapter)
+				
+		executionContext.clearOutEvents
+		
 		var Event event = null
 		do {
 			traceInterpreter.evaluate(beginRunCycleTrace, executionContext)
@@ -178,26 +180,15 @@ class DefaultExecutionFlowInterpreter implements IExecutionFlowInterpreter, IEve
 		}
 	}
 
-	def rtcStep() {
-		
+	def rtcStep() {		
 		activeStateIndex = 0
 		if(executionContext.executedElements.size > 0) executionContext.executedElements.clear
-		executionContext.clearOutEvents
 		while (activeStateIndex < activeStateConfiguration.size) {
 			var state = activeStateConfiguration.get(activeStateIndex)
 			state?.reactSequence?.scheduleAndRun
 			activeStateIndex = activeStateIndex + 1
 		}
 		executionContext.clearLocalAndInEvents
-	}
-
-	def protected clearLocalAndInEvents(ExecutionContext executionContext) {
-		executionContext.allEvents.filter[direction == Direction.IN || direction == Direction.LOCAL].forEach [
-			if (raised) {
-				raised = false;
-				value = if(type !== null) type.defaultValue else null
-			}
-		]
 	}
 
 	override exit() {

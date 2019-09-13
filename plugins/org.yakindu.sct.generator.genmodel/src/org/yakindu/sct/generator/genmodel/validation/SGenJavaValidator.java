@@ -29,18 +29,20 @@ import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.validation.Check;
-import org.eclipse.xtext.validation.CheckType;
 import org.yakindu.base.base.DomainElement;
 import org.yakindu.base.base.NamedElement;
+import org.yakindu.base.types.Property;
 import org.yakindu.base.types.Type;
 import org.yakindu.base.types.inferrer.ITypeSystemInferrer;
 import org.yakindu.base.types.inferrer.ITypeSystemInferrer.InferenceResult;
 import org.yakindu.base.types.typesystem.ITypeSystem;
 import org.yakindu.base.types.validation.TypeValidator;
+import org.yakindu.sct.commons.ErrorCodeStatus;
 import org.yakindu.sct.generator.core.extensions.GeneratorExtensions;
 import org.yakindu.sct.generator.core.extensions.IGeneratorDescriptor;
 import org.yakindu.sct.generator.core.extensions.ILibraryDescriptor;
 import org.yakindu.sct.generator.core.extensions.LibraryExtensions;
+import org.yakindu.sct.generator.core.library.AbstractDefaultFeatureValueProvider;
 import org.yakindu.sct.generator.core.library.IDefaultFeatureValueProvider;
 import org.yakindu.sct.model.sgen.FeatureConfiguration;
 import org.yakindu.sct.model.sgen.FeatureParameter;
@@ -50,7 +52,6 @@ import org.yakindu.sct.model.sgen.FeatureTypeLibrary;
 import org.yakindu.sct.model.sgen.GeneratorEntry;
 import org.yakindu.sct.model.sgen.GeneratorModel;
 import org.yakindu.sct.model.sgen.ParameterTypes;
-import org.yakindu.sct.model.sgen.PropertyDefinition;
 import org.yakindu.sct.model.sgen.SGenPackage;
 
 import com.google.common.base.Function;
@@ -65,7 +66,7 @@ import com.google.inject.Injector;
  * @author andreas muelder - Initial contribution and API
  * 
  */
-public class SGenJavaValidator extends AbstractSGenJavaValidator {
+public class SGenJavaValidator extends AbstractSGenValidator {
 
 	public static final String MISSING_REQUIRED_PARAMETER = "Missing required parameter.";
 	public static final String MISSING_REQUIRED_FEATURE = "Missing required feature.";
@@ -78,7 +79,8 @@ public class SGenJavaValidator extends AbstractSGenJavaValidator {
 	public static final String INVALID_DOMAIN_ID = "This generator can not be used for domain %s. Valid domains are %s";
 	public static final String DUPLICATE_ELEMENT = "The %s '%s' exists multiple times. Please rename or remove duplicates.";
 
-	public static final String CODE_REQUIRED_FEATURE = "code_req_feature.";
+	public static final String CODE_REQUIRED_FEATURE = "code_req_feature"; 
+	public static final String CODE_REQUIRED_DOMAIN = "code_req_domain";
 
 	@Inject
 	private Injector injector;
@@ -94,28 +96,7 @@ public class SGenJavaValidator extends AbstractSGenJavaValidator {
 	protected IQualifiedNameProvider nameProvider;
 
 	@Check
-	public void checkDomainCompatibility(GeneratorModel model) {
-		Optional<IGeneratorDescriptor> generatorDescriptor = GeneratorExtensions
-				.getGeneratorDescriptor(model.getGeneratorId());
-		if (!generatorDescriptor.isPresent()) {
-			return;
-		}
-		Set<String> validDomains = generatorDescriptor.get().getValidDomains();
-		EList<GeneratorEntry> entries = model.getEntries();
-		for (GeneratorEntry generatorEntry : entries) {
-			EObject reference = generatorEntry.getElementRef();
-			if (reference instanceof DomainElement) {
-				String domainID = ((DomainElement) reference).getDomainID();
-				if (!validDomains.isEmpty() && !validDomains.contains(domainID)) {
-					error(String.format(INVALID_DOMAIN_ID, domainID, Arrays.toString(validDomains.toArray())),
-							generatorEntry, SGenPackage.Literals.GENERATOR_ENTRY__ELEMENT_REF);
-				}
-			}
-		}
-	}
-
-	@Check(CheckType.FAST)
-	public void checkInitialValue(PropertyDefinition property) {
+	public void checkInitialValue(Property property) {
 		if (property.getType() == null || property.getType().eIsProxy())
 			return;
 		InferenceResult expressionResult = inferrer.infer(property.getInitialValue(), this);
@@ -137,7 +118,7 @@ public class SGenJavaValidator extends AbstractSGenJavaValidator {
 			error(UNKNOWN_CONTENT_TYPE + contentType + "'", SGenPackage.Literals.GENERATOR_ENTRY__CONTENT_TYPE);
 		}
 	}
-	
+
 	@Check
 	public void checkDuplicateElementRef(GeneratorEntry entry) {
 		EObject elementRef = entry.getElementRef();
@@ -149,8 +130,10 @@ public class SGenJavaValidator extends AbstractSGenJavaValidator {
 			return;
 		}
 		IScope scope = scopeProvider.getScope(entry, SGenPackage.Literals.GENERATOR_ENTRY__ELEMENT_REF);
-		if (Iterables.size(Iterables.filter(scope.getAllElements(), (e) -> elementName.equals(e.getQualifiedName()))) > 1) {
-			warning(String.format(DUPLICATE_ELEMENT, entry.getContentType(), elementName), SGenPackage.Literals.GENERATOR_ENTRY__ELEMENT_REF);
+		if (Iterables
+				.size(Iterables.filter(scope.getAllElements(), (e) -> elementName.equals(e.getQualifiedName()))) > 1) {
+			warning(String.format(DUPLICATE_ELEMENT, entry.getContentType(), elementName),
+					SGenPackage.Literals.GENERATOR_ENTRY__ELEMENT_REF);
 		}
 	}
 
@@ -198,9 +181,15 @@ public class SGenJavaValidator extends AbstractSGenJavaValidator {
 
 	private void createMarker(IStatus status) {
 		switch (status.getSeverity()) {
-		case IStatus.ERROR:
-			super.error(status.getMessage(), SGenPackage.Literals.FEATURE_PARAMETER_VALUE__EXPRESSION);
+		case IStatus.ERROR: {
+			if (status instanceof ErrorCodeStatus) {
+				super.error(status.getMessage(), SGenPackage.Literals.FEATURE_PARAMETER_VALUE__EXPRESSION,
+						((ErrorCodeStatus) status).getErrorCode());
+			}else {
+				super.error(status.getMessage(), SGenPackage.Literals.FEATURE_PARAMETER_VALUE__EXPRESSION);
+			}
 			break;
+		}
 		case IStatus.WARNING:
 			super.warning(status.getMessage(), SGenPackage.Literals.FEATURE_PARAMETER_VALUE__EXPRESSION);
 		}
@@ -275,6 +264,30 @@ public class SGenJavaValidator extends AbstractSGenJavaValidator {
 				error(String.format(MISSING_REQUIRED_FEATURE + " %s", featureType.getName()),
 						SGenPackage.Literals.GENERATOR_ENTRY__ELEMENT_REF, CODE_REQUIRED_FEATURE,
 						featureType.getName());
+		}
+	}
+	
+
+	@Check
+	public void checkDomainCompatibility(GeneratorModel model) {
+		Optional<IGeneratorDescriptor> generatorDescriptor = GeneratorExtensions
+				.getGeneratorDescriptor(model.getGeneratorId());
+		if (!generatorDescriptor.isPresent()) {
+			return;
+		}
+		// DIFFERENT_DOMAIN_REQUIRED
+		Set<String> validDomains = generatorDescriptor.get().getValidDomains();
+		EList<GeneratorEntry> entries = model.getEntries();
+		for (GeneratorEntry generatorEntry : entries) {
+			EObject reference = generatorEntry.getElementRef();
+			if (reference instanceof DomainElement) {
+				String domainID = ((DomainElement) reference).getDomainID();
+				if (!validDomains.isEmpty() && !validDomains.contains(domainID)) {
+					error(String.format(INVALID_DOMAIN_ID, domainID, Arrays.toString(validDomains.toArray())),
+							generatorEntry, SGenPackage.Literals.GENERATOR_ENTRY__ELEMENT_REF, CODE_REQUIRED_DOMAIN,
+							String.join(",", validDomains));
+				}
+			}
 		}
 	}
 

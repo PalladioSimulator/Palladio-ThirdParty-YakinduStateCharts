@@ -30,6 +30,7 @@ public class SCTUnitTestModels extends AbstractTestModelsUtil {
 	public static final String ALWAYS_ONCYCLE = "AlwaysOncycle.sct";
 	public static final String ASSIGNMENT_AS_EXPRESSION = "AssignmentAsExpression.sct";
 	public static final String BIT_EXPRESSIONS = "BitExpressions.sct";
+	public static final String BITWISE_EXECUTION_ORDER = "BitwiseExecutionOrder.sct";
 	public static final String BOOLEAN_EXPRESSIONS = "BooleanExpressions.sct";
 	public static final String CAST_EXPRESSIONS = "CastExpressions.sct";
 	public static final String CHOICE = "Choice.sct";
@@ -44,7 +45,7 @@ public class SCTUnitTestModels extends AbstractTestModelsUtil {
 	public static final String ENTRY_CHOICE = "EntryChoice.sct";
 	public static final String EVENT_DRIVEN_OUT_EVENTS = "EventDrivenOutEvents.sct";
 	public static final String EXIT_ON_SELF_TRANSITION = "ExitOnSelfTransition.sct";
-	public static final String EXIT_STATE = "ExitState.sct";
+	public static final String EXIT_STATE = "exits/ExitState.sct";
 	public static final String EXIT_STATECHART = "ExitStatechart.sct /* don't test currently */";
 	public static final String FEATURE_CALLS = "FeatureCalls.sct";
 	public static final String GUARD = "Guard.sct";

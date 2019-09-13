@@ -35,6 +35,7 @@
     <parameters
         name="exitState"
         comment="Whether to generate a callback that is used when a state is entered."
+        optional="true"
         parameterType="BOOLEAN"/>
   </types>
   <types name="Includes"
@@ -42,6 +43,13 @@
     <parameters
         name="useRelativePaths"
         comment="If set to 'true' relative paths are calculated for include statements, otherwise simple includes are used."
+        optional="true"
+        parameterType="BOOLEAN"/>
+  </types>
+  <types name="GeneratorOptions"
+      optional="true">
+    <parameters
+        name="inEventQueue"
         optional="true"
         parameterType="BOOLEAN"/>
   </types>

@@ -16,11 +16,11 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.EcoreUtil2
 import org.yakindu.base.expressions.expressions.AssignmentExpression
 import org.yakindu.base.expressions.expressions.ElementReferenceExpression
-import org.yakindu.base.expressions.expressions.Expression
 import org.yakindu.base.expressions.expressions.FeatureCall
 import org.yakindu.base.types.Declaration
 import org.yakindu.base.types.Direction
 import org.yakindu.base.types.Event
+import org.yakindu.base.types.Expression
 import org.yakindu.base.types.Property
 import org.yakindu.sct.model.sexec.Check
 import org.yakindu.sct.model.sexec.ExecutionFlow
@@ -28,6 +28,7 @@ import org.yakindu.sct.model.sexec.ExecutionNode
 import org.yakindu.sct.model.sexec.ExecutionRegion
 import org.yakindu.sct.model.sexec.ExecutionScope
 import org.yakindu.sct.model.sexec.ExecutionState
+import org.yakindu.sct.model.sexec.Method
 import org.yakindu.sct.model.sexec.Reaction
 import org.yakindu.sct.model.sexec.Sequence
 import org.yakindu.sct.model.sexec.Step
@@ -41,7 +42,6 @@ import org.yakindu.sct.model.stext.stext.InternalScope
 import org.yakindu.sct.model.stext.stext.OperationDefinition
 import org.yakindu.sct.model.stext.stext.StatechartScope
 import org.yakindu.sct.model.stext.stext.VariableDefinition
-import org.yakindu.sct.model.sexec.Method
 
 class SExecExtensions {
 	def <T extends EObject> T eContainerOfType(EObject eObject, Class<T> type) {
@@ -57,6 +57,10 @@ class SExecExtensions {
 	
 	def ExecutionFlow flow(EObject it){
 		eContainerOfType(ExecutionFlow)
+	}
+	
+	def Statechart statechart(ExecutionFlow it) {
+		sourceElement as Statechart
 	}
 	
 	def Scope scope(Declaration it) {
@@ -190,6 +194,10 @@ class SExecExtensions {
 		!incomingEvents.empty
 	}
 	
+	def hasInEvents(ExecutionFlow it) {
+		!getIncomingEvents.empty
+	}
+	
 	def hasIncomingEventsWithValue(Scope it) {
 		!incomingEvents.filter[hasValue].empty
 	}
@@ -247,7 +255,7 @@ class SExecExtensions {
 		if (reference instanceof Declaration) reference as Declaration
 	}
 	def dispatch definition(FeatureCall it) {
-		if (feature instanceof Declaration) feature as Declaration
+		feature
 	}
 	def dispatch definition(Expression it) {
 		null
@@ -262,7 +270,7 @@ class SExecExtensions {
 	}
 	
 	def Event event(Declaration it) {
-		if (it instanceof Event) it as Event else null 	
+		if (it instanceof Event) it else null 	
 	}
 
 	def dispatch List<ExecutionState> subStates(ExecutionState it) {

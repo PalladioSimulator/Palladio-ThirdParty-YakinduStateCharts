@@ -55,12 +55,13 @@ class StatemachineSourceFragment implements ISourceFragment {
 		'''
 		#include "«(module.h).relativeTo(module.c)»"
 		#include "«(typesModule.h).relativeTo(module.c)»"
-		«IF timed || !it.operations.empty»
+		«IF timed || entry.tracingUsed || !it.operations.empty»
 			#include "«(module.client.h).relativeTo(module.c)»"
 		«ENDIF»
 		
-		#include <stdlib.h>
+		«IF hasStringComparison»
 		#include <string.h>
+		«ENDIF»
 		«IF modOnReal»#include <math.h>«ENDIF»
 		/*! \file Implementation of the state machine '«name»'
 		*/

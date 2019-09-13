@@ -331,29 +331,6 @@ public class TypesItemProviderAdapterFactory extends TypesAdapterFactory impleme
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.yakindu.base.types.TypeConstraint} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected TypeConstraintItemProvider typeConstraintItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.yakindu.base.types.TypeConstraint}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createTypeConstraintAdapter() {
-		if (typeConstraintItemProvider == null) {
-			typeConstraintItemProvider = new TypeConstraintItemProvider(this);
-		}
-
-		return typeConstraintItemProvider;
-	}
-
-	/**
 	 * This keeps track of the one adapter used for all {@link org.yakindu.base.types.TypeParameter} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -397,52 +374,6 @@ public class TypesItemProviderAdapterFactory extends TypesAdapterFactory impleme
 		}
 
 		return genericElementItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.yakindu.base.types.PackageMember} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected PackageMemberItemProvider packageMemberItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.yakindu.base.types.PackageMember}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createPackageMemberAdapter() {
-		if (packageMemberItemProvider == null) {
-			packageMemberItemProvider = new PackageMemberItemProvider(this);
-		}
-
-		return packageMemberItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.yakindu.base.types.RangeConstraint} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected RangeConstraintItemProvider rangeConstraintItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.yakindu.base.types.RangeConstraint}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createRangeConstraintAdapter() {
-		if (rangeConstraintItemProvider == null) {
-			rangeConstraintItemProvider = new RangeConstraintItemProvider(this);
-		}
-
-		return rangeConstraintItemProvider;
 	}
 
 	/**
@@ -515,6 +446,29 @@ public class TypesItemProviderAdapterFactory extends TypesAdapterFactory impleme
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.yakindu.base.types.AnnotatableElement} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected AnnotatableElementItemProvider annotatableElementItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.yakindu.base.types.AnnotatableElement}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createAnnotatableElementAdapter() {
+		if (annotatableElementItemProvider == null) {
+			annotatableElementItemProvider = new AnnotatableElementItemProvider(this);
+		}
+
+		return annotatableElementItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link org.yakindu.base.types.ArrayTypeSpecifier} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -558,6 +512,52 @@ public class TypesItemProviderAdapterFactory extends TypesAdapterFactory impleme
 		}
 
 		return annotationTypeItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.yakindu.base.types.TypedDeclaration} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected TypedDeclarationItemProvider typedDeclarationItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.yakindu.base.types.TypedDeclaration}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createTypedDeclarationAdapter() {
+		if (typedDeclarationItemProvider == null) {
+			typedDeclarationItemProvider = new TypedDeclarationItemProvider(this);
+		}
+
+		return typedDeclarationItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.yakindu.base.types.MetaComposite} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected MetaCompositeItemProvider metaCompositeItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.yakindu.base.types.MetaComposite}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createMetaCompositeAdapter() {
+		if (metaCompositeItemProvider == null) {
+			metaCompositeItemProvider = new MetaCompositeItemProvider(this);
+		}
+
+		return metaCompositeItemProvider;
 	}
 
 	/**
@@ -670,16 +670,16 @@ public class TypesItemProviderAdapterFactory extends TypesAdapterFactory impleme
 		if (primitiveTypeItemProvider != null) primitiveTypeItemProvider.dispose();
 		if (complexTypeItemProvider != null) complexTypeItemProvider.dispose();
 		if (enumeratorItemProvider != null) enumeratorItemProvider.dispose();
-		if (typeConstraintItemProvider != null) typeConstraintItemProvider.dispose();
 		if (typeParameterItemProvider != null) typeParameterItemProvider.dispose();
 		if (genericElementItemProvider != null) genericElementItemProvider.dispose();
-		if (packageMemberItemProvider != null) packageMemberItemProvider.dispose();
-		if (rangeConstraintItemProvider != null) rangeConstraintItemProvider.dispose();
 		if (domainItemProvider != null) domainItemProvider.dispose();
 		if (typeAliasItemProvider != null) typeAliasItemProvider.dispose();
 		if (annotationItemProvider != null) annotationItemProvider.dispose();
+		if (annotatableElementItemProvider != null) annotatableElementItemProvider.dispose();
 		if (arrayTypeSpecifierItemProvider != null) arrayTypeSpecifierItemProvider.dispose();
 		if (annotationTypeItemProvider != null) annotationTypeItemProvider.dispose();
+		if (typedDeclarationItemProvider != null) typedDeclarationItemProvider.dispose();
+		if (metaCompositeItemProvider != null) metaCompositeItemProvider.dispose();
 	}
 
 }

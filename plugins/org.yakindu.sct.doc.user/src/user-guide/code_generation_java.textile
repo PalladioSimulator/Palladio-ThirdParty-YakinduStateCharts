@@ -1,8 +1,6 @@
 
 p. 
 
-==<div style="counter-reset: h1 7 h2 6">==
-
 h2(#codegen_java_code_generator). Java code generator
 
 h3(#codegen_java_code_generator_features). Java code generator features
@@ -37,6 +35,8 @@ bc. feature Naming {
 
 h4(#codegen_java_synchronizedwrapper_feature). SynchronizedWrapper feature
 
+This feature is deprecated. Use @GeneralFeatures { synchronized=true}@ instead.
+
 The *SynchronizedWrapper* feature generates a synchronized wrapper for the state machine. This is an additional Java class providing thread-safe access to the generated state machine implementation. As the wrapper adds thread safety any number of client threads may call the state machine.
 
 It is an _optional_ feature and has the following parameters:
@@ -63,12 +63,16 @@ bc. feature SynchronizedWrapper {
 
 h4(#codegen_java_runnablewrapper_feature). RunnableWrapper feature
 
+This feature is deprecated. Use @GeneralFeatures { Runnable=true}@ instead.
+
 The *RunnableWrapper* feature generates a runnable wrapper for the state machine. This is an additional Java class providing a thread-safe wrapper for the generated state machine implementation. In addition to the specific state machine interface it implements the _Runnable_ interface and can be executed in a thread. It implements an event queue and event-driven execution semantics. As the wrapper adds thread safety any number of client threads may call the state machine.
 
 It is an _optional_ feature and has the following parameters:
 
 * _namePrefix_ (String, optional): Name prefix for the generated wrapper class
 * _nameSuffix_ (String, optional): Name suffix for the generated wrapper class
+
+Instead of using the *RunnableWrapper*, you can also use the option "*InEventQueue*":#codegen_java_generalfeatures if the statemachine uses the eventdriven execution model.
 
 ==<div class="example">==
 
@@ -96,6 +100,9 @@ The *GeneralFeatures* feature allows to configure additional services to be gene
 * _InterfaceObserverSupport_ (Boolean, optional): Enables/disables the generation of listener interfaces for the state machine.
 * _RuntimeService_ (Boolean, optional): Enables/disables the generation of a runtime service that triggers the run cycle of a cycle-based state machine.
 * _TimerService_ (Boolean, optional): Enables/disables the generation of a timer service implementation using _java.util.Timer_.
+* _InEventQueue_ (Boolean, optional): Enables queuing of in-events in the statemachine (for event-driven execution). You can use this instead of the "*RunnableWrapper*":#codegen_java_runnablewrapper_feature.
+* _synchronized_ (Boolean, optional): Sets all methods where it is appropriate to "synchronized". This replaces the "*SynchronizedWrapper*":#codegen_java_synchronizedwrapper_feature.
+* _Runnable_ (Boolean, optional): Makes the statemachine implement _java.lang.Runnable_. Works only for event-driven statemachines. This implies _synchronized_ and _InEventQueue_. This replaces the "*RunnableWrapper*":#codegen_java_runnablewrapper_feature.
 
 ==<div class="example">==
 
@@ -112,6 +119,27 @@ bc. feature GeneralFeatures {
 ==<!-- End sgen_feature_generalfeatures -->==
 
 
+==<!-- Start sgen_feature_tracing -->==
+
+h4(#codegen_c_tracing_feature). Tracing feature
+
+The *Tracing* feature enables the generation of tracing callback functions:
+
+* _enterState_ (boolean, optional): Specifies whether to generate a callback function that is used to notify about state-entering events.
+* _exitState_ (boolean, optional): Specifies whether to generate a callback that is used to notify about state-exiting events.
+
+==<div class="example">==
+
+Example:
+
+bc. feature Tracing {
+    enterState = true
+    exitState  = true
+}
+
+==</div>==
+
+==<!-- End sgen_feature_tracing -->==
 
 
 h3(#codegen_java_specification_of_java_code). Specification of Java code
@@ -808,6 +836,65 @@ public static void main(String[] args) {
     statemachine.runCycle();
 }
 
+p. 
+
+h4(#codegen_java_trace-observed_state_machine). Trace-observed state machine
+
+p. By using the tracing feature the execution of the state machine can be observed. In detail, entered and exited states can be traced. Therefore, additional operation callbacks _onStateEntered_ and _onStateExited_ are generated in the _ITracingListener_ interface:
+
+bc.. 
+/**
+ * Tracing interface for state machines.
+ * Must be implemented if tracing feature is used.
+ * Multiple listeners can be added to and removed from the state machine.
+ */
+public interface ITracingListener<T> {
+	
+	/**
+	 * OnStateEntered will be called if any state has been entered.
+	 */
+	void onStateEntered(T state);
+	
+	/**
+	* OnStateExited will be called if any state has been exited.
+	*/
+	void onStateExited(T state);
+}
+
+p. With additional generated API in the generated state machine, listeners can be added to and removed from the state machine. Therefore, an implementation of the _ITracingListener_ interface is required. A minimum implementation could be done like this:
+
+bc.. 
+public class TracingImpl<T> implements ITracingListener<T>{
+	@Override
+	public void onStateEntered(T state) {}
+	@Override
+	public void onStateExited(T state) {}
+}
+
+p. If the tracing feature is enabled, one or more listeners can be added:
+
+bc.. 
+public class StatemachineRunner {
+	public void runStatemachine() {
+		SomeStatemachine sm = new SomeStatemachine();
+		
+		// create multiple observer
+		TracingImpl<State> traceObserver1 = new TracingImpl<State>();
+		TracingImpl<State> traceObserver2 = new TracingImpl<State>();
+		
+		// add observer to the statemachine
+		sm.addTraceObserver(traceObserver1);
+		sm.addTraceObserver(traceObserver2);
+		
+		sm.init();
+		sm.enter();
+		
+		// remove observer if it is not needed anymore
+		sm.removeTraceObserver(traceObserver2);
+		
+		sm.runCycle();
+	}
+}
 
 
 h4(#codegen_java_integrating_generated_code). Integrating generated code
@@ -925,5 +1012,3 @@ When the simulation is executed, the variable _result_ gets the value 2.
 !images/docu_java_simulating_operation_020_run_configuration.png(Configuring an operations class)!
 
 p=. Configuring an operations class
-
-==</div>==

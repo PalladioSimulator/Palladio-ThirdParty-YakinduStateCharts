@@ -58,6 +58,22 @@ GeneratorModel for sctunit::java {
 			libraryTargetFolder = "src-gen"
 		}
 	}
+	
+	test BitwiseExecutionOrder {
+		feature Naming {
+			basePackage = "org.yakindu.sct.generator.java.test"
+		}
+
+		feature Outlet {
+			targetProject = "org.yakindu.sct.generator.java.test"
+			targetFolder = "test-gen"
+		}
+		
+		feature StatechartNaming {
+			basePackage = "org.yakindu.scr"
+			libraryTargetFolder = "src-gen"
+		}
+	}
 
 	test BooleanExpressions {
 		feature Naming {
@@ -140,6 +156,22 @@ GeneratorModel for sctunit::java {
 	}
 
 	test ConstantsTests {
+		feature Naming {
+			basePackage = "org.yakindu.sct.generator.java.test"
+		}
+
+		feature Outlet {
+			targetProject = "org.yakindu.sct.generator.java.test"
+			targetFolder = "test-gen"
+		}
+		
+		feature StatechartNaming {
+			basePackage = "org.yakindu.scr"
+			libraryTargetFolder = "src-gen"
+		}
+	}
+	
+	test ConstantsVariationTests {
 		feature Naming {
 			basePackage = "org.yakindu.sct.generator.java.test"
 		}
@@ -363,7 +395,7 @@ GeneratorModel for sctunit::java {
 		}
 	}
 
-	test ExitState {
+	test ExitSequence {
 		feature Naming {
 			basePackage = "org.yakindu.sct.generator.java.test"
 		}

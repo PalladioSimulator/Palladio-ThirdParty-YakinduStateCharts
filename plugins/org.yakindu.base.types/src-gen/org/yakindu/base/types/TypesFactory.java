@@ -125,15 +125,6 @@ public interface TypesFactory extends EFactory {
 	Enumerator createEnumerator();
 
 	/**
-	 * Returns a new object of class '<em>Type Constraint</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Type Constraint</em>'.
-	 * @generated
-	 */
-	TypeConstraint createTypeConstraint();
-
-	/**
 	 * Returns a new object of class '<em>Type Parameter</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -150,24 +141,6 @@ public interface TypesFactory extends EFactory {
 	 * @generated
 	 */
 	GenericElement createGenericElement();
-
-	/**
-	 * Returns a new object of class '<em>Package Member</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Package Member</em>'.
-	 * @generated
-	 */
-	PackageMember createPackageMember();
-
-	/**
-	 * Returns a new object of class '<em>Range Constraint</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Range Constraint</em>'.
-	 * @generated
-	 */
-	RangeConstraint createRangeConstraint();
 
 	/**
 	 * Returns a new object of class '<em>Domain</em>'.
@@ -197,6 +170,15 @@ public interface TypesFactory extends EFactory {
 	Annotation createAnnotation();
 
 	/**
+	 * Returns a new object of class '<em>Annotatable Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Annotatable Element</em>'.
+	 * @generated
+	 */
+	AnnotatableElement createAnnotatableElement();
+
+	/**
 	 * Returns a new object of class '<em>Array Type Specifier</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -213,6 +195,24 @@ public interface TypesFactory extends EFactory {
 	 * @generated
 	 */
 	AnnotationType createAnnotationType();
+
+	/**
+	 * Returns a new object of class '<em>Typed Declaration</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Typed Declaration</em>'.
+	 * @generated
+	 */
+	TypedDeclaration createTypedDeclaration();
+
+	/**
+	 * Returns a new object of class '<em>Meta Composite</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Meta Composite</em>'.
+	 * @generated
+	 */
+	MetaComposite createMetaComposite();
 
 	/**
 	 * Returns the package supported by this factory.

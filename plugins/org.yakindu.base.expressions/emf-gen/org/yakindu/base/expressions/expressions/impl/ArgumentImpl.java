@@ -9,8 +9,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.yakindu.base.expressions.expressions.Argument;
-import org.yakindu.base.expressions.expressions.Expression;
 import org.yakindu.base.expressions.expressions.ExpressionsPackage;
+import org.yakindu.base.types.Expression;
 import org.yakindu.base.types.Parameter;
 
 /**
@@ -72,6 +72,7 @@ public class ArgumentImpl extends MinimalEObjectImpl.Container implements Argume
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Parameter getParameter() {
 		if (parameter != null && parameter.eIsProxy()) {
 			InternalEObject oldParameter = (InternalEObject)parameter;
@@ -98,6 +99,7 @@ public class ArgumentImpl extends MinimalEObjectImpl.Container implements Argume
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setParameter(Parameter newParameter) {
 		Parameter oldParameter = parameter;
 		parameter = newParameter;
@@ -110,6 +112,7 @@ public class ArgumentImpl extends MinimalEObjectImpl.Container implements Argume
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Expression getValue() {
 		return value;
 	}
@@ -134,6 +137,7 @@ public class ArgumentImpl extends MinimalEObjectImpl.Container implements Argume
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setValue(Expression newValue) {
 		if (newValue != value) {
 			NotificationChain msgs = null;

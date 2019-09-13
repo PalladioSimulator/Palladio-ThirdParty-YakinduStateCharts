@@ -17,6 +17,7 @@ import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemProviderAdapter;
+import org.yakindu.base.types.Annotation;
 import org.yakindu.base.types.TypesPackage;
 
 /**
@@ -48,6 +49,7 @@ public class AnnotationItemProvider extends ItemProviderAdapter implements IEdit
 			super.getPropertyDescriptors(object);
 
 			addTypePropertyDescriptor(object);
+			addArgumentsPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -75,6 +77,28 @@ public class AnnotationItemProvider extends ItemProviderAdapter implements IEdit
 	}
 
 	/**
+	 * This adds a property descriptor for the Arguments feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addArgumentsPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Annotation_arguments_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Annotation_arguments_feature", "_UI_Annotation_type"),
+				 TypesPackage.Literals.ANNOTATION__ARGUMENTS,
+				 true,
+				 false,
+				 true,
+				 null,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This returns Annotation.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -86,14 +110,14 @@ public class AnnotationItemProvider extends ItemProviderAdapter implements IEdit
 	}
 
 	/**
-	 * This returns the label text for the adapted class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String getText(Object object) {
-		return getString("_UI_Annotation_type");
+		Annotation annotation = (Annotation)object;
+		if(annotation.getType() != null)
+			return annotation.getType().getName();
+		return "unknown";
 	}
 	
 

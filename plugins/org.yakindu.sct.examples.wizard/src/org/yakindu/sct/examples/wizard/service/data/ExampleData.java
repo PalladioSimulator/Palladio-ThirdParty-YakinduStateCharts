@@ -25,6 +25,9 @@ public class ExampleData implements Comparable<ExampleData>, IExampleData {
 
 	private static final String PRO_CATEGORY = "professional";
 	private static final String LABS_CATEGORY = "labs";
+	private static final String STANDARD_CATEGORY = "standard";
+	private static final String PLATFORM_CATEGORY = "platform";
+	private static final String HEADLESS_CATEGORY = "headless";
 	
 	private String id;
 	private String title;
@@ -32,15 +35,39 @@ public class ExampleData implements Comparable<ExampleData>, IExampleData {
 	private String description;
 	private String[] images;
 	private File projectDir;
+	private Dependency[] dependencies;
 
-	public ExampleData(String category[], String id, String title, String description, String[] images) {
+	public static class Dependency {
+		private String updateSite;
+		private String[] features;
+
+		public Dependency(String updateSite, String[] features) {
+			this.updateSite = updateSite;
+			this.features = features;
+		}
+		
+		public String getUpdateSite() {
+			return updateSite;
+		}
+		
+		public String[] getFeatures() {
+			return features;
+		}
+	}
+	
+	public ExampleData(String category[], String id, String title, String description, String[] images, Dependency[] dependencies) {
 		this.category = category;
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.images = images;
+		this.dependencies = dependencies;
 	}
-
+	
+	public Dependency[] getDependencies() {
+		return dependencies;
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -106,6 +133,20 @@ public class ExampleData implements Comparable<ExampleData>, IExampleData {
 	@Override
 	public boolean isLabs() {
 		return Arrays.asList(getCategory()).contains(LABS_CATEGORY);
+	}
+	
+	public boolean isStandard() {
+		return Arrays.asList(getCategory()).contains(STANDARD_CATEGORY);
+	}
+	
+	public boolean isPlatform() {
+		return Arrays.asList(getCategory()).contains(PLATFORM_CATEGORY);
+	}
+	
+
+	@Override
+	public boolean isHeadless() {
+		return Arrays.asList(getCategory()).contains(HEADLESS_CATEGORY);
 	}
 	
 	@Override

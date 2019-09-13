@@ -13,7 +13,6 @@ import com.google.inject.Inject
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.yakindu.base.types.Direction
 import org.yakindu.base.types.Parameter
-import org.yakindu.base.types.typesystem.GenericTypeSystem
 import org.yakindu.base.types.typesystem.ITypeSystem
 import org.yakindu.sct.generator.core.types.ICodegenTypeSystemAccess
 import org.yakindu.sct.model.sexec.ExecutionFlow
@@ -52,18 +51,20 @@ class StatemachineInterface {
 			{
 				public interface «flow.statemachineInterfaceName» : «flow.statemachineInterfaceExtensions» {
 					«IF flow.internalScope !== null»
-					
-					«var constants = flow.internalScope.declarations.filter(VariableDefinition).filter[const]»
-					«FOR constant : constants»
-						«constant.constantFieldDeclaration()»
-					«ENDFOR»
+						«var constants = flow.internalScope.declarations.filter(VariableDefinition).filter[const]»
+						«FOR constant : constants»
+							«constant.constantFieldDeclaration()»
+						«ENDFOR»
+						«IF flow.internalScope.hasOperations»
+							void set«flow.internalScope.internalOperationCallbackName»(«flow.internalScope.internalOperationCallbackName» operationCallback);
+						«ENDIF»
 					«ENDIF»
 					«FOR scope : flow.scopes»
 						«scope.createIFaceGetter()»
 					«ENDFOR»
 				}
 				
-				«FOR scope : flow.scopes»
+				«FOR scope : flow.scopes SEPARATOR '\n'»
 					«scope.createScope(entry)»
 				«ENDFOR»
 			}
@@ -106,15 +107,13 @@ class StatemachineInterface {
 						«operation.operationSignature»
 					«ENDFOR»
 				}
-				
-				void set«scope.internalOperationCallbackName»(«scope.internalOperationCallbackName» operationCallback);
 			«ENDIF»
 		'''
 	}
 
 	def protected createInterface(InterfaceScope scope, GeneratorEntry entry) {
 		'''
-				public interface «scope.interfaceName» {
+			public interface «scope.interfaceName» {
 				«var constants = scope.declarations.filter(VariableDefinition).filter[const]»
 				«FOR constant : constants»
 					«constant.constantFieldDeclaration()»
@@ -125,10 +124,10 @@ class StatemachineInterface {
 				List<«scope.getInterfaceListenerName()»> getListeners();
 				«ENDIF»
 			
-					«IF scope.hasOperations()»
-						void set«scope.getInterfaceOperationCallbackName()»(«scope.getInterfaceOperationCallbackName()» operationCallback);
-					«ENDIF»
-				}
+				«IF scope.hasOperations()»
+					void set«scope.getInterfaceOperationCallbackName()»(«scope.getInterfaceOperationCallbackName()» operationCallback);
+				«ENDIF»
+			}
 		'''
 	}
 
@@ -139,7 +138,7 @@ class StatemachineInterface {
 				public interface «scope.getInterfaceListenerName()» {
 					«FOR event : scope.eventDefinitions»
 						«IF event.direction == Direction::OUT»
-							«IF event.type !== null && !isSame(event.type, getType(GenericTypeSystem.VOID))»
+							«IF event.type !== null && !isVoid(event.type)»
 								void on«event.name.toFirstUpper()»Raised(«event.typeSpecifier.targetLanguageName» value);
 							«ELSE»
 								void on«event.name.toFirstUpper()»Raised();
@@ -156,9 +155,9 @@ class StatemachineInterface {
 			«IF scope.hasOperations»
 				
 				public interface «scope.getInterfaceOperationCallbackName()» {
-				«FOR operation : scope.operations»
-					«operation.operationSignature»
-				«ENDFOR»
+					«FOR operation : scope.operations»
+						«operation.operationSignature»
+					«ENDFOR»
 				}
 			«ENDIF»
 		'''
@@ -168,7 +167,7 @@ class StatemachineInterface {
 		'''
 			«FOR event : scope.eventDefinitions»
 				«IF event.direction == Direction::IN»
-				«IF event.type !== null && !isSame(event.type, getType(GenericTypeSystem.VOID))»
+				«IF event.type !== null && !isVoid(event.type)»
 						void raise«event.name.asName»(«event.typeSpecifier.targetLanguageName» value);
 					«ELSE»
 						void raise«event.name.asName»();
@@ -176,7 +175,7 @@ class StatemachineInterface {
 				«ELSEIF event.direction == Direction::OUT»
 					bool isRaised«event.name.asName»();
 					««« IMPORTANT: An event not specifying a type is regarded to have a void type
-				«IF event.type !== null && !isSame(event.type, getType(GenericTypeSystem.VOID))»
+				«IF event.type !== null && !isVoid(event.type)»
 						«event.typeSpecifier.targetLanguageName» get«event.name.asName»Value();
 					«ENDIF»	
 				«ENDIF»

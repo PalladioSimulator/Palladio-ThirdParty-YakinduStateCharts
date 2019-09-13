@@ -33,9 +33,22 @@
         deprecated="true"
         optional="true"
         parameterType="BOOLEAN"/>
+    <parameters
+        name="inEventQueue"
+        optional="true"
+        parameterType="BOOLEAN"/>
+    <parameters
+        name="synchronized"
+        optional="true"
+        parameterType="BOOLEAN"/>
+    <parameters
+        name="runnable"
+        optional="true"
+        parameterType="BOOLEAN"/>
   </types>
   <types name="RunnableWrapper"
-      comment="Generates a runnable wrapper for the state machine"
+      deprecated="true"
+      comment="Use parameter &quot;runnable&quot; in feature &quot;GeneralFeatures&quot; instead."
       optional="true">
     <parameters
         name="namePrefix"
@@ -47,6 +60,8 @@
         optional="true"/>
   </types>
   <types name="SynchronizedWrapper"
+      deprecated="true"
+      comment="Use parameter &quot;synchronized&quot; in feature &quot;GeneralFeatures&quot; instead."
       optional="true">
     <parameters
         name="namePrefix"
@@ -54,5 +69,19 @@
     <parameters
         name="nameSuffix"
         optional="true"/>
+  </types>
+  <types name="Tracing"
+      comment="Enables generation of tracing callbacks."
+      optional="true">
+    <parameters
+        name="enterState"
+        comment="Whether to generate a callback that is used when a state is entered."
+        optional="true"
+        parameterType="BOOLEAN"/>
+    <parameters
+        name="exitState"
+        comment="Whether to generate a callback that is used when a state is entered."
+        optional="true"
+        parameterType="BOOLEAN"/>
   </types>
 </sgen:FeatureTypeLibrary>

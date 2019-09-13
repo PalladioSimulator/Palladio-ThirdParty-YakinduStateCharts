@@ -67,6 +67,7 @@ public class ShiftExpressionImpl extends BinaryExpressionImpl implements ShiftEx
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ShiftOperator getOperator() {
 		return operator;
 	}
@@ -76,6 +77,7 @@ public class ShiftExpressionImpl extends BinaryExpressionImpl implements ShiftEx
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOperator(ShiftOperator newOperator) {
 		ShiftOperator oldOperator = operator;
 		operator = newOperator == null ? OPERATOR_EDEFAULT : newOperator;
@@ -150,7 +152,7 @@ public class ShiftExpressionImpl extends BinaryExpressionImpl implements ShiftEx
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
+		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (operator: ");
 		result.append(operator);
 		result.append(')');

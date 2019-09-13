@@ -19,13 +19,21 @@ import org.yakindu.sct.model.sruntime.ExecutionContext
 class ExecutionContextExtensions {
 
 	def clearOutEvents(ExecutionContext executionContext) {
-		executionContext.allEvents.filter[direction == Direction.OUT].forEach[if(raised) raised = false]
+		executionContext.allEvents.filter[direction == Direction.OUT].forEach[
+			if(raised) raised = false
+		]
+	}
+
+	def clearLocalAndInEvents(ExecutionContext executionContext) {
+		executionContext.allEvents.filter[direction == Direction.IN || direction == Direction.LOCAL].forEach [
+			if(raised) raised = false
+		]
 	}
 
 	def List<RegularState> getAllActiveStates(ExecutionContext context) {
 		context.activeStates.filter(RegularState).map[stateHierachy].flatten.toList
 	}
-
+	
 	def protected getStateHierachy(RegularState state) {
 		var result = new ArrayList<RegularState>()
 		result.add(state);

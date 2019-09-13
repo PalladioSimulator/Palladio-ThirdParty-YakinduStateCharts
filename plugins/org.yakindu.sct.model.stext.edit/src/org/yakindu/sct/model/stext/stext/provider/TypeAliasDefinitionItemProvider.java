@@ -16,11 +16,20 @@ import java.util.List;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.ResourceLocator;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
+import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
+import org.eclipse.emf.edit.provider.ViewerNotification;
+import org.yakindu.base.base.BasePackage;
 import org.yakindu.base.types.TypeAlias;
+import org.yakindu.base.types.TypesFactory;
 import org.yakindu.base.types.TypesPackage;
 import org.yakindu.base.types.provider.TypeAliasItemProvider;
+import org.yakindu.sct.model.sgraph.SGraphFactory;
 import org.yakindu.sct.model.stext.stext.StextFactory;
+import org.yakindu.sct.model.stext.stext.StextPackage;
+import org.yakindu.sct.model.stext.stext.TypeAliasDefinition;
 
 /**
  * This is the item provider adapter for a
@@ -117,8 +126,63 @@ public class TypeAliasDefinitionItemProvider extends TypeAliasItemProvider {
 
 		newChildDescriptors.add
 			(createChildParameter
-				(TypesPackage.Literals.PACKAGE_MEMBER__ANNOTATIONS,
-				 StextFactory.eINSTANCE.createArgumentedAnnotation()));
+				(TypesPackage.Literals.ANNOTATABLE_ELEMENT__ANNOTATION_INFO,
+				 StextFactory.eINSTANCE.createStatechartSpecification()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(TypesPackage.Literals.ANNOTATABLE_ELEMENT__ANNOTATION_INFO,
+				 StextFactory.eINSTANCE.createEventDefinition()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(TypesPackage.Literals.ANNOTATABLE_ELEMENT__ANNOTATION_INFO,
+				 StextFactory.eINSTANCE.createVariableDefinition()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(TypesPackage.Literals.ANNOTATABLE_ELEMENT__ANNOTATION_INFO,
+				 StextFactory.eINSTANCE.createOperationDefinition()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(TypesPackage.Literals.ANNOTATABLE_ELEMENT__ANNOTATION_INFO,
+				 StextFactory.eINSTANCE.createTypeAliasDefinition()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(TypesPackage.Literals.ANNOTATABLE_ELEMENT__ANNOTATION_INFO,
+				 SGraphFactory.eINSTANCE.createStatechart()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(TypesPackage.Literals.ANNOTATABLE_ELEMENT__ANNOTATION_INFO,
+				 SGraphFactory.eINSTANCE.createImportDeclaration()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(TypesPackage.Literals.META_COMPOSITE__META_FEATURES,
+				 StextFactory.eINSTANCE.createEventDefinition()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(TypesPackage.Literals.META_COMPOSITE__META_FEATURES,
+				 StextFactory.eINSTANCE.createVariableDefinition()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(TypesPackage.Literals.META_COMPOSITE__META_FEATURES,
+				 StextFactory.eINSTANCE.createOperationDefinition()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(TypesPackage.Literals.META_COMPOSITE__META_FEATURES,
+				 StextFactory.eINSTANCE.createTypeAliasDefinition()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(TypesPackage.Literals.META_COMPOSITE__META_FEATURES,
+				 SGraphFactory.eINSTANCE.createImportDeclaration()));
 	}
 
 	/**
@@ -133,6 +197,8 @@ public class TypeAliasDefinitionItemProvider extends TypeAliasItemProvider {
 		Object childObject = child;
 
 		boolean qualify =
+			childFeature == TypesPackage.Literals.ANNOTATABLE_ELEMENT__ANNOTATION_INFO ||
+			childFeature == TypesPackage.Literals.META_COMPOSITE__META_FEATURES ||
 			childFeature == TypesPackage.Literals.TYPED_ELEMENT__TYPE_SPECIFIER ||
 			childFeature == TypesPackage.Literals.TYPE__SUPER_TYPES;
 

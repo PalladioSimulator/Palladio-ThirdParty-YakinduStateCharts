@@ -29,7 +29,7 @@ class GenmodelEntries {
 		if (licenseTextParameter !== null) {
 			return "/* " + licenseTextParameter.stringValue.trim + " */"
 		}
-		return null
+		return LICENSE_STANDARD_TEXT
 	}
 	
 	def private getIdentifierSettingsFeature(GeneratorEntry it) {
@@ -95,5 +95,22 @@ class GenmodelEntries {
 			return exitStateParameter.booleanValue
 		}
 		return false
+	}
+	
+	def tracingUsed(GeneratorEntry it) {
+		return (tracingEnterState || tracingExitState)
+	}
+	
+	def private getGeneratorOptionsFeature(GeneratorEntry it) {
+		getFeatureConfiguration(ICFeatureConstants::FEATURE_GENERATOR_OPTIONS)
+	}
+	
+	def getInEventQueueUsed(GeneratorEntry it) {
+		val parameter = generatorOptionsFeature?.getParameterValue(ICFeatureConstants::PARAMETER_IN_EVENT_QUEUE)
+		if(parameter !== null) {
+			parameter.booleanValue
+		} else {
+			false
+		}
 	}
 }

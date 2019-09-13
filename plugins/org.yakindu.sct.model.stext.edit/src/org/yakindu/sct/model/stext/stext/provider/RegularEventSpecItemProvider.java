@@ -166,11 +166,6 @@ public class RegularEventSpecItemProvider extends EventSpecItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(StextPackage.Literals.REGULAR_EVENT_SPEC__EVENT,
-				 StextFactory.eINSTANCE.createArgumentedAnnotation()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(StextPackage.Literals.REGULAR_EVENT_SPEC__EVENT,
 				 ExpressionsFactory.eINSTANCE.createAssignmentExpression()));
 
 		newChildDescriptors.add
@@ -247,6 +242,11 @@ public class RegularEventSpecItemProvider extends EventSpecItemProvider
 			(createChildParameter
 				(StextPackage.Literals.REGULAR_EVENT_SPEC__EVENT,
 				 ExpressionsFactory.eINSTANCE.createFeatureCall()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(StextPackage.Literals.REGULAR_EVENT_SPEC__EVENT,
+				 ExpressionsFactory.eINSTANCE.createMetaCall()));
 
 		newChildDescriptors.add
 			(createChildParameter

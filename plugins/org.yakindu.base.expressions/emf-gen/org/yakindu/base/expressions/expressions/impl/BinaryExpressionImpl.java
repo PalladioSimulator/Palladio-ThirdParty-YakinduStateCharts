@@ -9,8 +9,9 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.yakindu.base.expressions.expressions.BinaryExpression;
-import org.yakindu.base.expressions.expressions.Expression;
 import org.yakindu.base.expressions.expressions.ExpressionsPackage;
+import org.yakindu.base.types.Expression;
+import org.yakindu.base.types.impl.ExpressionImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -71,6 +72,7 @@ public abstract class BinaryExpressionImpl extends ExpressionImpl implements Bin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Expression getLeftOperand() {
 		return leftOperand;
 	}
@@ -95,6 +97,7 @@ public abstract class BinaryExpressionImpl extends ExpressionImpl implements Bin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setLeftOperand(Expression newLeftOperand) {
 		if (newLeftOperand != leftOperand) {
 			NotificationChain msgs = null;
@@ -114,6 +117,7 @@ public abstract class BinaryExpressionImpl extends ExpressionImpl implements Bin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Expression getRightOperand() {
 		return rightOperand;
 	}
@@ -138,6 +142,7 @@ public abstract class BinaryExpressionImpl extends ExpressionImpl implements Bin
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setRightOperand(Expression newRightOperand) {
 		if (newRightOperand != rightOperand) {
 			NotificationChain msgs = null;

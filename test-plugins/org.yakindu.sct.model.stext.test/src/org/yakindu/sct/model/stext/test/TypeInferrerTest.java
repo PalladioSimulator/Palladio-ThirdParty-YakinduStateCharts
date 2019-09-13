@@ -10,6 +10,7 @@
  */
 package org.yakindu.sct.model.stext.test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.xtext.junit4.InjectWith;
@@ -18,14 +19,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.yakindu.base.expressions.expressions.Argument;
 import org.yakindu.base.expressions.expressions.ElementReferenceExpression;
-import org.yakindu.base.expressions.expressions.Expression;
+import org.yakindu.base.types.Expression;
 import org.yakindu.base.types.Parameter;
 import org.yakindu.base.types.inferrer.ITypeSystemInferrer;
 import org.yakindu.base.types.typesystem.ITypeSystem;
 import org.yakindu.sct.model.stext.stext.EventRaisingExpression;
 import org.yakindu.sct.model.stext.stext.OperationDefinition;
 import org.yakindu.sct.model.stext.stext.StextFactory;
-import org.yakindu.sct.model.stext.stext.VariableDefinition;
 import org.yakindu.sct.model.stext.test.util.AbstractTypeInferrerTest;
 import org.yakindu.sct.model.stext.test.util.STextInjectorProvider;
 import org.yakindu.sct.model.stext.test.util.STextTestScopeProvider;
@@ -700,48 +700,48 @@ public class TypeInferrerTest extends AbstractTypeInferrerTest {
 	@Test
 	// VariableDefinition is a statement, not an expression
 	public void testVariableDefinitionSuccess() {
-		assertTrue(isBooleanType(inferType("var boolVar : boolean = !true", VariableDefinition.class.getSimpleName())));
-		assertTrue(isIntegerType(inferType("var intVar : integer = 5", VariableDefinition.class.getSimpleName())));
-		assertTrue(isRealType(inferType("var realVar : real = 0.5", VariableDefinition.class.getSimpleName())));
-		assertTrue(isRealType(inferType("var realVar : real = 5", VariableDefinition.class.getSimpleName()))); // coercion
-		assertTrue(isStringType(inferType("var stringVar : string = 'test'", VariableDefinition.class.getSimpleName())));
+		assertTrue(isBooleanType(inferType("var boolVar : boolean = !true", "ScopeDeclaration")));
+		assertTrue(isIntegerType(inferType("var intVar : integer = 5", "ScopeDeclaration")));
+		assertTrue(isRealType(inferType("var realVar : real = 0.5", "ScopeDeclaration")));
+		assertTrue(isRealType(inferType("var realVar : real = 5", "ScopeDeclaration"))); // coercion
+		assertTrue(isStringType(inferType("var stringVar : string = 'test'", "ScopeDeclaration")));
 	}
 
 	@Test
 	// VariableDefinition is a statement, not an expression
 	public void testVariableDefinitionFailure() {
-		expectIssue(inferType("var boolVar : boolean = 5", VariableDefinition.class.getSimpleName(), interfaceScope()),
+		expectIssue(inferType("var boolVar : boolean = 5", "ScopeDeclaration", interfaceScope()),
 				"Cannot assign a value of type integer to a variable of type boolean.");
 		expectIssue(
-				inferType("var boolVar : boolean = 0.5", VariableDefinition.class.getSimpleName(), interfaceScope()),
+				inferType("var boolVar : boolean = 0.5", "ScopeDeclaration", interfaceScope()),
 				"Cannot assign a value of type real to a variable of type boolean.");
 		expectIssue(
-				inferType("var boolVar : boolean = 'text'", VariableDefinition.class.getSimpleName(), interfaceScope()),
+				inferType("var boolVar : boolean = 'text'", "ScopeDeclaration", interfaceScope()),
 				"Cannot assign a value of type string to a variable of type boolean.");
 		expectIssue(
-				inferType("var intVar : integer = true", VariableDefinition.class.getSimpleName(), interfaceScope()),
+				inferType("var intVar : integer = true", "ScopeDeclaration", interfaceScope()),
 				"Cannot assign a value of type boolean to a variable of type integer.");
 		expectIssue(
-				inferType("var intVar : integer = 0.5", VariableDefinition.class.getSimpleName(), interfaceScope()),
+				inferType("var intVar : integer = 0.5", "ScopeDeclaration", interfaceScope()),
 				"Cannot assign a value of type real to a variable of type integer.");
 		expectIssue(
-				inferType("var intVar : integer = 'text'", VariableDefinition.class.getSimpleName(), interfaceScope()),
+				inferType("var intVar : integer = 'text'", "ScopeDeclaration", interfaceScope()),
 				"Cannot assign a value of type string to a variable of type integer.");
 
-		expectIssue(inferType("var realVar : real = true", VariableDefinition.class.getSimpleName(), interfaceScope()),
+		expectIssue(inferType("var realVar : real = true", "ScopeDeclaration", interfaceScope()),
 				"Cannot assign a value of type boolean to a variable of type real.");
 		expectIssue(
-				inferType("var realVar : real = 'text'", VariableDefinition.class.getSimpleName(), interfaceScope()),
+				inferType("var realVar : real = 'text'", "ScopeDeclaration", interfaceScope()),
 				"Cannot assign a value of type string to a variable of type real.");
 
 		expectIssue(
-				inferType("var stringVar : string = true", VariableDefinition.class.getSimpleName(), interfaceScope()),
+				inferType("var stringVar : string = true", "ScopeDeclaration", interfaceScope()),
 				"Cannot assign a value of type boolean to a variable of type string.");
 		expectIssue(
-				inferType("var stringVar : string = 5", VariableDefinition.class.getSimpleName(), interfaceScope()),
+				inferType("var stringVar : string = 5", "ScopeDeclaration", interfaceScope()),
 				"Cannot assign a value of type integer to a variable of type string.");
 		expectIssue(
-				inferType("var stringVar : string = 0.5", VariableDefinition.class.getSimpleName(), interfaceScope()),
+				inferType("var stringVar : string = 0.5", "ScopeDeclaration", interfaceScope()),
 				"Cannot assign a value of type real to a variable of type string.");
 	}
 
@@ -959,6 +959,9 @@ public class TypeInferrerTest extends AbstractTypeInferrerTest {
 		
 		expectNoErrors("b = t.op2()", "internal: var t:ComplexParameterizedType<integer, boolean> var b: boolean");
 
+		assertFalse(isAnyType(inferTypeResultForExpression("t.prop1",
+				"internal var t:ComplexParameterizedType<ComplexParameterizedType<>, integer>").getType()));
+		
 		assertTrue(isAnyType(inferTypeResultForExpression("t.prop1.prop1",
 				"internal var t:ComplexParameterizedType<ComplexParameterizedType<>, integer>").getType()));
 		
@@ -1027,7 +1030,7 @@ public class TypeInferrerTest extends AbstractTypeInferrerTest {
 		
 		expectNoErrors("myCPT = templateOp(myCPT, myCPT)", scopes);
 		
-		expectError("myB = templateOp(myI, myI)", scopes, ITypeSystemInferrer.NOT_COMPATIBLE_CODE);
+		expectError("myB = templateOp(myI, myI)", scopes, ITypeSystemInferrer.NOT_INFERRABLE_TYPE_PARAMETER_CODE);
 		expectError("myB = templateOp(3+5, boolean)", scopes, ITypeSystemInferrer.NOT_INFERRABLE_TYPE_PARAMETER_CODE);
 		
 		expectErrors("myCPT2 = templateOp(myCPT, myCPT)", scopes, ITypeSystemInferrer.NOT_SAME_CODE, 2);
@@ -1045,7 +1048,7 @@ public class TypeInferrerTest extends AbstractTypeInferrerTest {
 		
 		expectError("myI = nestedOp(3)", scope, ITypeSystemInferrer.NOT_COMPATIBLE_CODE);
 		expectNoErrors("myI = nestedOp(nestedCPT)", scope);
-		expectError("myB = nestedOp(nestedCPT)", scope, ITypeSystemInferrer.NOT_COMPATIBLE_CODE);
+		expectError("myB = nestedOp(nestedCPT)", scope, ITypeSystemInferrer.NOT_INFERRABLE_TYPE_PARAMETER_CODE);
 	}
 	
 	@Test
@@ -1058,7 +1061,7 @@ public class TypeInferrerTest extends AbstractTypeInferrerTest {
 				+ "var b: boolean ";
 		
 		expectNoErrors("myS = nestedNestedOp(nestedCPT)", scope);
-		expectError("b = nestedNestedOp(nestedCPT)", scope, ITypeSystemInferrer.NOT_COMPATIBLE_CODE);
+		expectError("b = nestedNestedOp(nestedCPT)", scope, ITypeSystemInferrer.NOT_INFERRABLE_TYPE_PARAMETER_CODE);
 	}
 	
 	@Test
@@ -1076,8 +1079,8 @@ public class TypeInferrerTest extends AbstractTypeInferrerTest {
 		expectNoErrors("b = cmo.genericOp(true, 2)", scope);
 		expectNoErrors("b = cmo.genericOp(true, 2)", scope);
 		expectError("i = cmo.genericOp(1.3, 2)", scope, ITypeSystemInferrer.NOT_COMPATIBLE_CODE);
-		expectError("r = cmo.genericOp(false, 2)", scope, ITypeSystemInferrer.NOT_COMPATIBLE_CODE);
-		expectError("b = cmo.genericOp(1.3, 2)", scope, ITypeSystemInferrer.NOT_COMPATIBLE_CODE);
+		expectError("r = cmo.genericOp(false, 2)", scope, ITypeSystemInferrer.NOT_INFERRABLE_TYPE_PARAMETER_CODE);
+		expectError("b = cmo.genericOp(1.3, 2)", scope, ITypeSystemInferrer.NOT_INFERRABLE_TYPE_PARAMETER_CODE);
 	}
 	
 	@Test
@@ -1093,5 +1096,59 @@ public class TypeInferrerTest extends AbstractTypeInferrerTest {
 
 		expectNoErrors("b = owner.overloaded(true)", scopes);
 		assertTrue(isBooleanType(inferTypeResultForExpression("b = owner.overloaded(true)", scopes).getType()));
+	}
+	
+	@Test
+	public void testSubTypeOfGenericType() {
+		String scope = ""
+				+ "internal "
+				+ "var i : integer "
+				+ "var b : boolean "
+				+ "var st : SubTypeOfGenericType<integer> "
+				+ "var sst : SubSubTypeOfGenericType ";
+		
+		expectNoErrors("i = st.get()", scope);
+		assertTrue(isIntegerType(inferTypeResultForExpression("st.get()", scope).getType()));
+		
+		expectNoErrors("st.add(i)", scope);
+		assertTrue(isVoidType(inferTypeResultForExpression("st.add(i)", scope).getType()));
+		
+		expectNoErrors("b = sst.get()", scope);
+		assertTrue(isBooleanType(inferTypeResultForExpression("sst.get()", scope).getType()));
+		
+		expectNoErrors("sst.add(b)", scope);
+		assertTrue(isVoidType(inferTypeResultForExpression("sst.add(b)", scope).getType()));
+	}
+	
+	@Test
+	public void testTargetTypeInferrence() {
+		String scope = ""
+				+ "internal: "
+				+ "var cmo: ParameterizedMethodOwner "
+				+ "var i: integer "
+				+ "var b: boolean = cmo.genericOpWoParams() "
+				+ "var nestedCPT: ComplexParameterizedType<ComplexParameterizedType<boolean, string>, integer> = cmo.genericOpWoParams()";
+		
+		// target type from assignment
+		expectOk("i = cmo.genericOpWoParams()", scope);
+		assertTrue(isIntegerType(inferTypeResultForExpression("i = cmo.genericOpWoParams()", scope).getType()));
+		
+		// target type from variable initialization
+		assertTrue(isBooleanType(inferTypeResultForExpression("b", scope).getType()));
+		assertTrue(isBooleanType(inferTypeResultForExpression("nestedCPT.prop1.prop1", scope).getType()));
+		assertTrue(isStringType(inferTypeResultForExpression("nestedCPT.prop1.prop2", scope).getType()));
+		assertTrue(isIntegerType(inferTypeResultForExpression("nestedCPT.prop2", scope).getType()));
+		
+		// target type from operation parameter
+		expectOk("cmo.concreteOp(cmo.genericOpWoParams())", scope);
+	}
+	
+	@Test
+	public void testInnerPackageTypeInferrence() {
+		String scope = ""
+			+ "internal: "
+			+ "var e : Types.EnumType = Types.EnumType.FOO";
+		
+		expectOk("e = Types.EnumType.BAR", scope);
 	}
 }
