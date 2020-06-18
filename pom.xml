@@ -13,6 +13,10 @@
 	<version>3.5.6-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	
+	<properties>
+		<org.palladiosimulator.maven.tychotprefresh.tpproject.groupId>org.palladiosimulator.yakindu.statecharts</org.palladiosimulator.maven.tychotprefresh.tpproject.groupId>
+	</properties>
+
 	<modules>
 		<module>plugins/org.yakindu.base.xtext.utils.jface</module>
 		<module>plugins/org.yakindu.base.xtext.utils.gmf</module>
