@@ -10,12 +10,12 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
+import jakarta.xml.parsers.DocumentBuilder;
+import jakarta.xml.parsers.DocumentBuilderFactory;
+import jakarta.xml.xpath.XPath;
+import jakarta.xml.xpath.XPathConstants;
+import jakarta.xml.xpath.XPathExpression;
+import jakarta.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 
