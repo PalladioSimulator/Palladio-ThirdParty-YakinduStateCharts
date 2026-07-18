@@ -38,7 +38,7 @@ Require-Bundle: org.yakindu.sct.generator.genmodel;visibility:=reexport,
 Import-Package: org.apache.commons.logging,
  org.apache.log4j,
  org.eclipse.jdt.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.yakindu.sct.generator.genmodel.ide,
  org.yakindu.sct.generator.genmodel.ide.contentassist.antlr,
  org.yakindu.sct.generator.genmodel.ide.contentassist.antlr.internal,

@@ -16,7 +16,7 @@ Export-Package: org.yakindu.sct.generator.java,
  org.yakindu.sct.generator.java.submodules.lifecycle,
  org.yakindu.sct.generator.java.types
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: com.google.inject.multibindings;version="1.3.0"
 Automatic-Module-Name: org.yakindu.sct.generator.java
 

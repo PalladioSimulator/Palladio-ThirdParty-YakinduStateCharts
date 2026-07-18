@@ -11,6 +11,6 @@ Bundle-Vendor: statecharts.org
 Export-Package: org.yakindu.sct.generator.csharp,
  org.yakindu.sct.generator.csharp.features
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.yakindu.sct.generator.csharp
 

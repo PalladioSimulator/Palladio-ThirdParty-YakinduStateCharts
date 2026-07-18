@@ -49,7 +49,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.yakindu.sct.domain,
  org.yakindu.sct.model.stext.lib
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.yakindu.sct.ui.editor,
  org.yakindu.sct.ui.editor.assistent,
  org.yakindu.sct.ui.editor.clipboardsupport,

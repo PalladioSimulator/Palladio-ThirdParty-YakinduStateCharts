@@ -10,7 +10,7 @@ Require-Bundle: org.yakindu.sct.model.sexec,
  org.yakindu.base.types,
  org.yakindu.sct.domain.generic,
  org.yakindu.sct.model.stext.lib
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: com.google.inject.multibindings;version="1.3.0"
 Export-Package: org.yakindu.sct.generator.c,
  org.yakindu.sct.generator.c.extensions,

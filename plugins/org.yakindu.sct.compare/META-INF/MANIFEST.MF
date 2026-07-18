@@ -18,7 +18,7 @@ Require-Bundle: org.eclipse.ui,
  org.yakindu.sct.model.sgraph,
  org.eclipse.emf.compare.diagram,
  org.eclipse.emf.compare.edit
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: statecharts.org
 Automatic-Module-Name: org.yakindu.sct.compare

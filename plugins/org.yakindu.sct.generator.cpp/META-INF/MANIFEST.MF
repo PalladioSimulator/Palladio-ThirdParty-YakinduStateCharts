@@ -7,7 +7,7 @@ Require-Bundle: org.yakindu.sct.model.stext,
  org.yakindu.sct.generator.genmodel,
  org.yakindu.sct.generator.c,
  org.yakindu.sct.model.stext.lib
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.yakindu.sct.generator.cpp,
  org.yakindu.sct.generator.cpp.eventdriven,
  org.yakindu.sct.generator.cpp.features,
