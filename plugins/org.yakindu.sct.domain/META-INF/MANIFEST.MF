@@ -7,7 +7,7 @@ Bundle-Activator: org.yakindu.sct.domain.DomainActivator
 Bundle-Vendor: statecharts.org
 Require-Bundle: org.eclipse.core.runtime,
  com.google.guava,
- com.google.inject,
+ com.google.inject;bundle-version="[7.0.0,8.0.0)",
  org.yakindu.base.types,
  org.eclipse.xtext,
  org.yakindu.sct.model.sgraph

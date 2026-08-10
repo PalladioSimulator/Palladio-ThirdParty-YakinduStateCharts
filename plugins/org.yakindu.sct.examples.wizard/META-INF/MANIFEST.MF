@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.osgi,
  com.google.gson,
  org.eclipse.jgit,
- com.google.inject,
+ com.google.inject;bundle-version="[7.0.0,8.0.0)",
  com.google.guava,
  org.yakindu.sct.ui.editor,
  org.yakindu.sct.ui
