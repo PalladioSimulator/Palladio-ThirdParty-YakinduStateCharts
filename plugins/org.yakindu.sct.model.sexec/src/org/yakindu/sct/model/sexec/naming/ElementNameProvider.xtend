@@ -13,7 +13,7 @@ package org.yakindu.sct.model.sexec.naming
 
 import java.util.ArrayList
 import java.util.List
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.naming.QualifiedName
 import org.yakindu.base.base.NamedElement

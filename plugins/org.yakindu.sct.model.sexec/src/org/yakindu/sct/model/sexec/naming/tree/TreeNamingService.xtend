@@ -15,7 +15,7 @@ import com.google.inject.name.Named
 import java.util.ArrayList
 import java.util.List
 import java.util.Map
-import javax.inject.Inject
+import jakarta.inject.Inject
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.yakindu.base.base.NamedElement
