@@ -67,10 +67,10 @@ public class AdjustIdentityAnchorCommand extends AbstractTransactionalCommand {
 
 	@Override
 	protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-		@SuppressWarnings("unchecked")
-		List<IGraphicalEditPart> editParts = request.getEditParts();
-		for (IGraphicalEditPart editPart : editParts) {
-			adjustAnchors(editPart);
+		for (Object editPart : request.getEditParts()) {
+			if (editPart instanceof IGraphicalEditPart) {
+				adjustAnchors((IGraphicalEditPart) editPart);
+			}
 		}
 		return CommandResult.newOKCommandResult();
 	}
