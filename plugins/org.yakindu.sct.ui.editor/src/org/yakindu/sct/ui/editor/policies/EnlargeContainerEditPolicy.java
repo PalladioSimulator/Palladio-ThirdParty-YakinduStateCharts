@@ -77,8 +77,8 @@ public class EnlargeContainerEditPolicy extends AbstractEditPolicy {
 				result.add(new ICommandProxy(boundsCommand));
 				
 				// Update child bounds of elements that stand in the way...
-				List<IGraphicalEditPart> children = currentContainer.getParent().getChildren();
-				for (IGraphicalEditPart childPart : children) {
+				for (Object child : currentContainer.getParent().getChildren()) {
+					IGraphicalEditPart childPart = (IGraphicalEditPart) child;
 					if (cbr.getEditParts().contains(childPart))
 						continue;
 					IFigure childFigure = childPart.getFigure();
@@ -156,9 +156,8 @@ public class EnlargeContainerEditPolicy extends AbstractEditPolicy {
 		Point moveDelta = new Point(containerFeedbackBounds.width - originalBounds.width,
 				containerFeedbackBounds.height - originalBounds.height);
 
-		List<IGraphicalEditPart> children = containerEditPart.getParent().getChildren();
-
-		for (IGraphicalEditPart childPart : children) {
+		for (Object child : containerEditPart.getParent().getChildren()) {
+			IGraphicalEditPart childPart = (IGraphicalEditPart) child;
 			if (request.getEditParts().contains(childPart)) {
 				continue;
 			}
@@ -238,12 +237,11 @@ public class EnlargeContainerEditPolicy extends AbstractEditPolicy {
 		figure.getParent().setConstraint(figure, bounds);
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	private Rectangle calculateFeedbackBounds(ChangeBoundsRequest request, Rectangle feedbackBounds, int level,
 			IFigure containerFigure) {
 		Rectangle result = feedbackBounds.getCopy();
-		List<IGraphicalEditPart> editParts = request.getEditParts();
-		for (IGraphicalEditPart editPart : editParts) {
+		for (Object part : request.getEditParts()) {
+			IGraphicalEditPart editPart = (IGraphicalEditPart) part;
 			PrecisionRectangle transformedRect = new PrecisionRectangle(editPart.getFigure().getBounds());
 			editPart.getFigure().translateToAbsolute(transformedRect);
 			transformedRect.translate(request.getMoveDelta());

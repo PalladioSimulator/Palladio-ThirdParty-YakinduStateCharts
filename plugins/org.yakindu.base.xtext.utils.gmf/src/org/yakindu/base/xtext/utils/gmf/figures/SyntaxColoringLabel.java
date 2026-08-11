@@ -10,10 +10,12 @@
  */
 package org.yakindu.base.xtext.utils.gmf.figures;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Graphics;
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LineBorder;
 import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.MouseEvent;
@@ -61,7 +63,7 @@ public class SyntaxColoringLabel extends WrappingLabel implements MouseMotionLis
 	protected void setTextFlow() {
 		textFlow = new StyledTextFlow();
 		textFlow.setParent(getTextFigure());
-		getTextFigure().getChildren().set(0, textFlow);
+		((List<IFigure>) getTextFigure().getChildren()).set(0, textFlow);
 		setLayoutManager(textFlow, false);
 	}
 
