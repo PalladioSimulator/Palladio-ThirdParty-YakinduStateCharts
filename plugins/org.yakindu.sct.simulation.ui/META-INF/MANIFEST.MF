@@ -22,7 +22,7 @@ Require-Bundle: org.eclipse.ui,
  org.yakindu.base.xtext.utils.gmf,
  org.yakindu.sct.ui,
  com.google.inject;bundle-version="[7.0.0,8.0.0)",
- org.apache.commons.lang,
+ org.apache.commons.lang3,
  org.yakindu.sct.commons,
  org.eclipse.xtext,
  org.yakindu.sct.domain
