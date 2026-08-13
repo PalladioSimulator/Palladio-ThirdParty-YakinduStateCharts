@@ -14,7 +14,7 @@ import com.google.inject.Inject
 import com.google.inject.Provider
 import java.io.ByteArrayInputStream
 import java.util.Collections
-import org.apache.commons.lang.StringEscapeUtils
+import org.apache.commons.text.StringEscapeUtils
 import org.eclipse.core.resources.IContainer
 import org.eclipse.core.resources.IFile
 import org.eclipse.core.resources.IFolder
@@ -185,7 +185,7 @@ class GeneratorProjectTemplate {
 	}
 	
 	def protected escapeForXml(String s) {
-		StringEscapeUtils::escapeXml(s)
+		StringEscapeUtils::escapeXml10(s)
 	}
 	
 	def protected projectFile(ProjectData data) '''
