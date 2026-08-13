@@ -12,7 +12,7 @@ package org.yakindu.sct.model.sgraph.test.validation;
 
 import static org.yakindu.sct.model.sgraph.validation.RegionValidator.*;
 
-import org.eclipse.xtext.junit4.validation.AssertableDiagnostics;
+import org.eclipse.xtext.testing.validation.AssertableDiagnostics;
 import org.junit.Test;
 import org.yakindu.sct.model.sgraph.Entry;
 import org.yakindu.sct.model.sgraph.Exit;

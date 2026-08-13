@@ -11,7 +11,7 @@ package org.yakindu.sct.model.resource.test;
 
 import static com.google.inject.Guice.createInjector;
 
-import org.eclipse.xtext.junit4.IInjectorProvider;
+import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.ui.shared.SharedStateModule;
 import org.yakindu.sct.model.stext.STextRuntimeModule;
 import org.yakindu.sct.model.stext.ui.STextUiModule;

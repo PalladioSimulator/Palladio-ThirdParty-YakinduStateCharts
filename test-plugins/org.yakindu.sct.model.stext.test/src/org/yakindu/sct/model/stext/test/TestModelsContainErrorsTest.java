@@ -12,8 +12,8 @@ package org.yakindu.sct.model.stext.test;
 
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.xtext.junit4.validation.AssertableDiagnostics;
-import org.eclipse.xtext.junit4.validation.ValidatorTester;
+import org.eclipse.xtext.testing.validation.AssertableDiagnostics;
+import org.eclipse.xtext.testing.validation.ValidatorTester;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

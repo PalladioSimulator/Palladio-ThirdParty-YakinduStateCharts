@@ -10,7 +10,7 @@
  */
 package org.yakindu.sct.model.sexec.interpreter.test.util;
 
-import org.eclipse.xtext.junit4.IInjectorProvider;
+import org.eclipse.xtext.testing.IInjectorProvider;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

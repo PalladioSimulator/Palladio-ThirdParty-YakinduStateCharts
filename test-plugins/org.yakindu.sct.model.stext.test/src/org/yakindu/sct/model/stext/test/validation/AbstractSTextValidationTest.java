@@ -12,7 +12,7 @@ import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.junit4.validation.ValidatorTester;
+import org.eclipse.xtext.testing.validation.ValidatorTester;
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
 import org.junit.After;
 import org.junit.Before;

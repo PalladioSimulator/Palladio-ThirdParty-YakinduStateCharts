@@ -12,7 +12,7 @@ package org.yakindu.sct.model.sgraph.test.util;
 
 import org.eclipse.emf.ecore.impl.EValidatorRegistryImpl;
 import org.eclipse.emf.ecore.util.Diagnostician;
-import org.eclipse.xtext.junit4.validation.ValidatorTester;
+import org.eclipse.xtext.testing.validation.ValidatorTester;
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
 import org.yakindu.sct.model.sgraph.SGraphPackage;

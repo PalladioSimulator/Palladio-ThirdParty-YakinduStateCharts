@@ -13,7 +13,7 @@ package org.yakindu.sct.generator.genmodel.test.util;
 import static com.google.inject.Guice.createInjector;
 import static com.google.inject.util.Modules.override;
 
-import org.eclipse.xtext.junit4.IInjectorProvider;
+import org.eclipse.xtext.testing.IInjectorProvider;
 import org.yakindu.sct.generator.genmodel.ui.SGenUiModule;
 import org.yakindu.sct.generator.genmodel.ui.internal.GenmodelActivator;
 
