@@ -10,7 +10,7 @@ Require-Bundle: org.yakindu.sct.model.sexec,
  org.yakindu.base.xtext.utils.gmf,
  org.eclipse.core.runtime,
  org.eclipse.gmf.runtime.emf.core,
- org.eclipse.xtext.junit4,
+ org.eclipse.xtext.testing,
  org.eclipse.xtext,
  org.yakindu.sct.domain.generic,
  org.yakindu.sct.domain.generic.generator

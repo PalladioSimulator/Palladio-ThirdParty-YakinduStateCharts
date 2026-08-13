@@ -7,7 +7,7 @@ Bundle-Vendor: statecharts.org
 Fragment-Host: org.yakindu.sct.refactoring
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,
- org.eclipse.xtext.junit4,
+ org.eclipse.xtext.testing,
  org.yakindu.sct.model.sexec,
  org.yakindu.sct.test.models,
  org.yakindu.sct.domain.generic.resource

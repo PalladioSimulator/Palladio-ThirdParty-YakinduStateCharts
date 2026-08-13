@@ -12,7 +12,7 @@ package org.yakindu.sct.model.sgraph.test.validation;
 
 import static org.yakindu.sct.model.sgraph.validation.StateValidator.STATE_NAME_REQUIRED_CODE;
 
-import org.eclipse.xtext.junit4.validation.AssertableDiagnostics;
+import org.eclipse.xtext.testing.validation.AssertableDiagnostics;
 import org.junit.Test;
 import org.yakindu.sct.model.sgraph.State;
 import org.yakindu.sct.model.sgraph.test.util.SGraphJavaValidatorTester;

@@ -11,9 +11,9 @@
  */
 package org.yakindu.sct.model.stext.test.validation;
 
-import static org.eclipse.xtext.junit4.validation.AssertableDiagnostics.errorCode;
-import static org.eclipse.xtext.junit4.validation.AssertableDiagnostics.errorMsg;
-import static org.eclipse.xtext.junit4.validation.AssertableDiagnostics.warningMsg;
+import static org.eclipse.xtext.testing.validation.AssertableDiagnostics.errorCode;
+import static org.eclipse.xtext.testing.validation.AssertableDiagnostics.errorMsg;
+import static org.eclipse.xtext.testing.validation.AssertableDiagnostics.warningMsg;
 import static org.junit.Assert.assertEquals;
 import static org.yakindu.base.expressions.validation.ExpressionsValidator.ERROR_ASSIGNMENT_TO_CONST_MSG;
 import static org.yakindu.base.expressions.validation.ExpressionsValidator.ERROR_LEFT_HAND_ASSIGNMENT_MSG;
@@ -29,9 +29,9 @@ import java.util.Iterator;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.Diagnostician;
-import org.eclipse.xtext.junit4.InjectWith;
-import org.eclipse.xtext.junit4.XtextRunner;
-import org.eclipse.xtext.junit4.validation.AssertableDiagnostics;
+import org.eclipse.xtext.testing.InjectWith;
+import org.eclipse.xtext.testing.XtextRunner;
+import org.eclipse.xtext.testing.validation.AssertableDiagnostics;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;

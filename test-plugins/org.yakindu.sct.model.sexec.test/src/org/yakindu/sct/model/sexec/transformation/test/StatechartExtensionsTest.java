@@ -12,8 +12,8 @@ package org.yakindu.sct.model.sexec.transformation.test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.xtext.junit4.InjectWith;
-import org.eclipse.xtext.junit4.XtextRunner;
+import org.eclipse.xtext.testing.InjectWith;
+import org.eclipse.xtext.testing.XtextRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.yakindu.sct.model.sexec.transformation.StatechartExtensions;

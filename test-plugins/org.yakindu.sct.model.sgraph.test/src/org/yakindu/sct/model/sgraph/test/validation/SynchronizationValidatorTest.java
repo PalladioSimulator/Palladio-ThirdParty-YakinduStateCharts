@@ -10,13 +10,13 @@
  */
 package org.yakindu.sct.model.sgraph.test.validation;
 
-import org.eclipse.xtext.junit4.validation.AssertableDiagnostics;
+import org.eclipse.xtext.testing.validation.AssertableDiagnostics;
 import org.junit.Test;
 import org.yakindu.sct.model.sgraph.Statechart;
 import org.yakindu.sct.model.sgraph.test.util.SGraphJavaValidatorTester;
 import org.yakindu.sct.model.sgraph.validation.SynchronizationValidator;
 import static org.yakindu.sct.model.sgraph.validation.SynchronizationValidator.*;
-import static org.eclipse.xtext.junit4.validation.AssertableDiagnostics.*;
+import static org.eclipse.xtext.testing.validation.AssertableDiagnostics.*;
 import com.google.inject.Inject;
 
 /**
